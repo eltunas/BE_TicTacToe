@@ -1,0 +1,19 @@
+{
+  "name": "be_tictactoe",
+  "version": "1.0.0",
+  "description": "BE_TicTacToe",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eltunas/BE_TicTacToe.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eltunas/BE_TicTacToe/issues"
+  },
+  "homepage": "https://github.com/eltunas/BE_TicTacToe#readme"
+}
