@@ -1,8 +1,15 @@
-let redis = require('redis');
-const redisClient = redis.createClient();
+let redis = null;
+
 
 function getRedisClient(){
-    return redisClient;
+    
+  if(redis){
+    const Redis = require('ioredis');
+
+    redis = new Redis();
+  }
+
+  return redis;
 }
 
 module.exports = {getRedisClient}
