@@ -1,11 +1,10 @@
-let redis = null;
+const Redis = require('ioredis');
 
+let redis = null;
 
 function getRedisClient(){
     
-  if(redis){
-    const Redis = require('ioredis');
-
+  if(!redis){
     redis = new Redis();
   }
 
