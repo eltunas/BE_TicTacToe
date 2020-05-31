@@ -3,6 +3,9 @@ class User {
         this.id = id;
         this.name = name;
         this.createdDate = createdDate;
+        this.wins = 0;
+        this.ties = 0;
+        this.loses = 0;
     }
 }
 

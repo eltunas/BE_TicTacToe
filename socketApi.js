@@ -5,6 +5,13 @@ let socketApi = {};
 socketApi.io = io;
 module.exports = socketApi;
 
-socketApi.io.on('connection', (socket) => {
-    console.log('a user connected');
+socketApi.io.on("connection", socket => {
+    
+    console.log("user connected");
+
+    socket.on("play", (play) => {
+        console.log(play)
+        socket.emit('played', play);
+    })
+
 });
