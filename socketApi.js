@@ -9,6 +9,8 @@ let queue = [];
 let rooms = [];
 
 socketApi.io.on("connection", socket => {
+
+    socket.emit("connectionUp", true);
     console.log("conecto");
     console.log(queue);
     socket.on("findMatch", () => {
@@ -50,6 +52,5 @@ function findMatch(socket){
         
         // queue is empty, add our lone socket
         queue.push(socket);
-        socket.emit("serachingForPeer", queue);
     }
 }
