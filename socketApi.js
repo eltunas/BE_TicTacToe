@@ -47,7 +47,9 @@ function findMatch(socket){
         }
     } else {
         console.log("busco partida " + socket.id);
+        
         // queue is empty, add our lone socket
         queue.push(socket);
+        socket.emit("serachingForPeer", queue);
     }
 }
