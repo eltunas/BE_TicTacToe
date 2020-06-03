@@ -11,15 +11,12 @@ let rooms = [];
 socketApi.io.on("connection", socket => {
 
     socket.emit("connectionUp", true);
-    console.log("conecto");
-    console.log(queue);
+    
     socket.on("findMatch", () => {
-        //validar que no este en un match en la queue
         findMatch(socket);
     });
 
     socket.on("play", (play) => {
-        console.log(play)
         socket.emit('played', play);
     });
 });
@@ -52,5 +49,6 @@ function findMatch(socket){
         
         // queue is empty, add our lone socket
         queue.push(socket);
+
     }
 }
