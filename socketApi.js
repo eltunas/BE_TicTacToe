@@ -14,7 +14,6 @@ socketApi.io.on("connection", socket => {
     socket.on("findMatch", () => {
         //validar que no este en un match en la queue
         findMatch(socket);
-        socket.emit('matchFound', null);
     });
 
     socket.on("play", (play) => {
@@ -43,8 +42,8 @@ function findMatch(socket){
             rooms[socket.id] = room;
             // exchange names between the two of them and start the chat
             console.log("matcheando")
-            peer.emit("maaatchFound");
-            socket.emit("maaatchFound");
+            peer.emit("matchFound");
+            socket.emit("matchFound");
         }
     } else {
         console.log("busco partida " + socket.id);
