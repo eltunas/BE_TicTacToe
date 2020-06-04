@@ -9,21 +9,13 @@ let queue = [];
 let rooms = [];
 
 socketApi.io.on("connection", socket => {
-
-    socket.emit("connectionUp", true);
-    
     socket.on("findMatch", () => {
         findMatch(socket);
-    });
-
-    socket.on("play", (play) => {
-        socket.emit('played', play);
     });
 });
 
 
 function findMatch(socket){
-    console.log(queue);
     
     if (queue.length > 0) {
         console.log("match found")
