@@ -37,7 +37,7 @@ router.post("/", async (req, res) => {
     console.log(error);
   });
 
-  res.status(201).send(result.ops);
+  res.status(201).send(result);
 });
 
 router.delete("/:id", async (req, res) => {
@@ -50,6 +50,27 @@ router.delete("/:id", async (req, res) => {
       ? JSON.stringify("El usuario no existe")
       : JSON.stringify(`El usuario ${req.params.id} se borro correctamente`);
   res.status(statusCode).send(answerResult);
+});
+
+router.put("/updateWins/:id", async (req, res) => {
+  await dataUsers.updateWins(req.params.id).catch(error => {
+    console.log(error);
+  });
+  res.status(200).send(JSON.stringify("updated"));
+});
+
+router.put("/updateTies/:id", async (req, res) => {
+  await dataUsers.updateTies(req.params.id).catch(error => {
+    console.log(error);
+  });
+  res.status(200).send(JSON.stringify("updated"));
+});
+
+router.put("/updateLosses/:id", async (req, res) => {
+  await dataUsers.updateLosses(req.params.id).catch(error => {
+    console.log(error);
+  });
+  res.status(200).send(JSON.stringify("updated"));
 });
 
 module.exports = router;

@@ -5,7 +5,7 @@ class User {
     this.createdDate = createdDate;
     this.wins = 0;
     this.ties = 0;
-    this.loses = 0;
+    this.losses = 0;
   }
 }
 
