@@ -52,4 +52,25 @@ router.delete("/:id", async (req, res) => {
   res.status(statusCode).send(answerResult);
 });
 
+router.put("/updateWins/:id", async (req, res) => {
+  await dataUsers.updateWins(req.params.id).catch(error => {
+    console.log(error);
+  });
+  res.status(200).send(JSON.stringify("updated"));
+});
+
+router.put("/updateTies/:id", async (req, res) => {
+  await dataUsers.updateTies(req.params.id).catch(error => {
+    console.log(error);
+  });
+  res.status(200).send(JSON.stringify("updated"));
+});
+
+router.put("/updateLosses/:id", async (req, res) => {
+  await dataUsers.updateLosses(req.params.id).catch(error => {
+    console.log(error);
+  });
+  res.status(200).send(JSON.stringify("updated"));
+});
+
 module.exports = router;
