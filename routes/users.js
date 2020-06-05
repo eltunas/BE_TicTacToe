@@ -37,7 +37,7 @@ router.post("/", async (req, res) => {
     console.log(error);
   });
 
-  res.status(201).send(result.ops);
+  res.status(201).send(result);
 });
 
 router.delete("/:id", async (req, res) => {

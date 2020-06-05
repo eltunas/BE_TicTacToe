@@ -21,11 +21,11 @@ async function getUser(googleId) {
 
 async function insertUser(user) {
   const clientmongo = await connection.getConnection();
-  const result = await clientmongo
+  const { ops } = await clientmongo
     .db("db_tic_tac_toe")
     .collection("Users")
     .insertOne(user);
-  return result;
+  return ops;
 }
 
 async function deleteUser(googleId) {
@@ -75,6 +75,32 @@ async function updateUser(user, newValues, clientmongo) {
     .updateOne(query, newValues);
 }
 
+async function getRanking() {
+  const clientmongo = await connection.getConnection();
+  const sortOptions = { wins: -1, ties: -1, losses: 1 };
+  const collection = await clientmongo
+    .db("db_tic_tac_toe")
+    .collection("Users")
+    .find()
+    .sort(sortOptions)
+    .toArray();
+  return collection;
+}
+
+async function getRankOne() {
+  const clientmongo = await connection.getConnection();
+  const sortOptions = { wins: -1, ties: -1, losses: 1 };
+  const user = await clientmongo
+    .db("db_tic_tac_toe")
+    .collection("Users")
+    .find()
+    .sort(sortOptions)
+    .limit(1)
+    .toArray();
+  console.log(user);
+  return user;
+}
+
 module.exports = {
   getUsers,
   getUser,
@@ -83,4 +109,6 @@ module.exports = {
   updateWins,
   updateTies,
   updateLosses,
+  getRanking,
+  getRankOne,
 };
