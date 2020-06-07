@@ -1,3 +1,4 @@
+let gameLogic = require('./helpers/gameLogicHelper')
 let socket_io = require('socket.io');
 let io = socket_io();
 let socketApi = {};
@@ -9,8 +10,29 @@ let queue = [];
 let rooms = [];
 
 socketApi.io.on("connection", socket => {
+    console.log(socket.id + " esta conectado")
+
     socket.on("findMatch", () => {
         findMatch(socket);
+
+        socket.on("move", moveData => {
+            console.log("move");
+            console.log(rooms);
+            console.log(moveData);
+      
+            let room = rooms[moveData.socketId];
+            console.log(room);
+            room.boardState = updateBoard(room, moveData.square);
+
+            room.nextToMove = room.nextToMove == "X" ? "O" : "X";
+            console.log(room.boardState);
+            console.log(room.id);
+            socketApi.io.in(room.id).emit("boardUpdate", room.boardState);
+            if(gameLogic.gameWon(room.boardState, room.nextToMove)){
+                console.log("game finished");
+                socketApi.io.in(room.id).emit("matchEnded", "");
+            }
+        })
     });
 });
 
@@ -24,10 +46,14 @@ function findMatch(socket){
         if(peer.id == socket.id){
             queue.push(peer);
         }else{
-            let room = socket.id + '#' + peer.id;
+            let room = {
+                id: socket.id + '#' + peer.id,
+                boardState: ["", "", "","", "", "","", "", ""],
+                nextToMove: "X",
+            }
             // join them both
-            peer.join(room);
-            socket.join(room);
+            peer.join(room.id);
+            socket.join(room.id);
             // register rooms to their names
             rooms[peer.id] = room;
             rooms[socket.id] = room;
@@ -43,4 +69,9 @@ function findMatch(socket){
         queue.push(socket);
 
     }
+}
+
+function updateBoard(room, newMove){
+    room.boardState[newMove] = room.nextToMove;
+    return room.boardState;
 }
