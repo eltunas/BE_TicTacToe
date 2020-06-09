@@ -16,20 +16,16 @@ socketApi.io.on("connection", socket => {
         findMatch(socket);
 
         socket.on("move", moveData => {
-            console.log("move");
-            console.log(rooms);
-            console.log(moveData);
-      
+            
             let room = rooms[moveData.socketId];
-            console.log(room);
+            
             room.boardState = updateBoard(room, moveData.square);
 
             room.nextToMove = room.nextToMove == "X" ? "O" : "X";
-            console.log(room.boardState);
-            console.log(room.id);
-            socketApi.io.in(room.id).emit("boardUpdate", room.boardState);
+            
+            socketApi.io.in(room.id).emit("boardUpdate", room);
+            
             if(gameLogic.gameWon(room.boardState, room.nextToMove)){
-                console.log("game finished");
                 socketApi.io.in(room.id).emit("matchEnded", "");
             }
         })
@@ -46,10 +42,23 @@ function findMatch(socket){
         if(peer.id == socket.id){
             queue.push(peer);
         }else{
+            let player1;
+            let player2;
+
+            if(Math.random > 0.5){
+                player1 = "X";
+                player2 = "O";
+            }else{
+                player1 = "O";
+                player2 = "X";
+            }
+
             let room = {
                 id: socket.id + '#' + peer.id,
                 boardState: ["", "", "","", "", "","", "", ""],
                 nextToMove: "X",
+                player1: peer.id,
+                player2: socket.id
             }
             // join them both
             peer.join(room.id);
@@ -57,14 +66,11 @@ function findMatch(socket){
             // register rooms to their names
             rooms[peer.id] = room;
             rooms[socket.id] = room;
-            // exchange names between the two of them and start the chat
-            console.log("matcheando")
-            peer.emit("matchFound");
-            socket.emit("matchFound");
+            //mandar la data de la partida
+            peer.emit("matchFound", player1); 
+            socket.emit("matchFound", player2);
         }
     } else {
-        console.log("busco partida " + socket.id);
-        
         // queue is empty, add our lone socket
         queue.push(socket);
 
