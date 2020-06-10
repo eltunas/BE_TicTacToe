@@ -30,44 +30,29 @@ async function insertUser(user) {
 
 async function deleteUser(googleId) {
   const clientmongo = await connection.getConnection();
-  const result = await clientmongo
+  await clientmongo
     .db("db_tic_tac_toe")
     .collection("Users")
     .deleteOne({ googleId: googleId.toString() });
-  return result;
 }
 
-async function updateWins(googleId) {
-  const clientmongo = await connection.getConnection();
-  const user = await clientmongo
-    .db("db_tic_tac_toe")
-    .collection("Users")
-    .findOne({ googleId: googleId.toString() });
+async function updateWins(user) {
   const newValues = { $set: { wins: (user.wins += 1) } };
-  await updateUser(user, newValues, clientmongo);
+  await updateUser(user, newValues);
 }
 
-async function updateTies(googleId) {
-  const clientmongo = await connection.getConnection();
-  const user = await clientmongo
-    .db("db_tic_tac_toe")
-    .collection("Users")
-    .findOne({ googleId: googleId.toString() });
+async function updateTies(user) {
   const newValues = { $set: { ties: (user.ties += 1) } };
-  await updateUser(user, newValues, clientmongo);
+  await updateUser(user, newValues);
 }
 
-async function updateLosses(googleId) {
-  const clientmongo = await connection.getConnection();
-  const user = await clientmongo
-    .db("db_tic_tac_toe")
-    .collection("Users")
-    .findOne({ googleId: googleId.toString() });
+async function updateLosses(user) {
   const newValues = { $set: { losses: (user.losses += 1) } };
-  await updateUser(user, newValues, clientmongo);
+  await updateUser(user, newValues);
 }
 
-async function updateUser(user, newValues, clientmongo) {
+async function updateUser(user, newValues) {
+  const clientmongo = await connection.getConnection();
   const query = { googleId: user.googleId.toString() };
   await clientmongo
     .db("db_tic_tac_toe")
