@@ -21,11 +21,16 @@ socketApi.io.on("connection", socket => {
             
             room.boardState = updateBoard(room, moveData.square);
 
+            console.log(room.boardState);
+
+            let matchWon = gameLogic.gameWon(room.boardState, room.nextToMove);
+
             room.nextToMove = room.nextToMove == "X" ? "O" : "X";
             
             socketApi.io.in(room.id).emit("boardUpdate", room);
             
-            if(gameLogic.gameWon(room.boardState, room.nextToMove)){
+            if(matchWon){
+                console.log("match ended");
                 socketApi.io.in(room.id).emit("matchEnded", "");
             }
         })
