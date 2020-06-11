@@ -22,10 +22,6 @@ app.set("port", port);
 
 var server = http.createServer(app);
 socketApi.io.attach(server);
-app.use(function (req, res, next) {
-  res.io = socketApi.io;
-  next();
-});
 /**
  * Listen on provided port, on all network interfaces.
  */
