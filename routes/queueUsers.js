@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
     if (req.body.googleId == null || req.body.name == null || req.body.socket == null) {
         return res.status(400).json({ message: "Parametros incorrectos" })
     } else {
-        user = new queueUserModel.Queue(req.body.googleId, req.body.name, req.body.socket)
+        user = new queueUserModel.QueueUser(req.body.googleId, req.body.name, req.body.socket)
     }
     try {
         const newUser = await queueUsers.insertQueueUser(user);
