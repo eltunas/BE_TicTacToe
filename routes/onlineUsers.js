@@ -26,6 +26,8 @@ router.post("/", async (req, res) => {
   try {
     const newUser = await onlineUsers.insertOnlineUser(user);
     res.status(201).json(newUser);
+    console.log("esto es nuevo: ", res.io);
+    res.io.emit("updatedOnlineUsers");
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
