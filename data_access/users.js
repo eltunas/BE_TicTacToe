@@ -25,7 +25,7 @@ async function insertUser(user) {
     .db("db_tic_tac_toe")
     .collection("Users")
     .insertOne(user);
-  return ops;
+  return ops[0];
 }
 
 async function deleteUser(googleId) {

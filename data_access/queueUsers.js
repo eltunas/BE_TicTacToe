@@ -25,7 +25,7 @@ async function insertQueueUser(QueueUser) {
     .db("db_tic_tac_toe")
     .collection("Queue")
     .insertOne(QueueUser);
-  return ops;
+  return ops[0];
 }
 
 async function deleteQueueUser(googleId) {

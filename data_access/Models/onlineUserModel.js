@@ -1,8 +1,9 @@
 class OnlineUser {
-    constructor(googleId, name) {
-        this.googleId = googleId;
-        this.name = name;
-    }
+  constructor(googleId, name, socketId) {
+    this.googleId = googleId;
+    this.name = name;
+    this.socketId = socketId;
+  }
 }
 
 //method for User entity data access
