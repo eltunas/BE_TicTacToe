@@ -1,4 +1,4 @@
-class User {
+class OnlineUser {
     constructor(googleId, name) {
         this.googleId = googleId;
         this.name = name;

@@ -1,4 +1,4 @@
-class User {
+class QueueUser {
     constructor(googleId, name, socket) {
         this.googleId = googleId;
         this.name = name;
