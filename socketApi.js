@@ -1,6 +1,9 @@
-let gameLogic = require('./helpers/gameLogicHelper')
-let socket_io = require('socket.io');
-let io = socket_io();
+const gameLogic = require('./helpers/gameLogicHelper')
+const socket_io = require('socket.io');
+const io = socket_io();
+const dataRooms = require("./data_access/rooms");
+const RoomModel = require("./data_access/Models/RoomModel");
+
 let socketApi = {};
 //Your socket logic here
 socketApi.io = io;
@@ -15,10 +18,10 @@ socketApi.io.on("connection", socket => {
     socket.on("findMatch", () => {
         findMatch(socket);
 
-        socket.on("move", moveData => {
-            
-            let room = rooms[moveData.socketId];
-            
+        socket.on("move", async moveData => {
+            console.log(moveData);
+            let room = await dataRooms.getRoomByPlayerId(moveData.socketId);//rooms[moveData.socketId];
+            console.log(room);
             room.boardState = updateBoard(room, moveData.square);
 
             console.log(room.boardState);
@@ -26,12 +29,19 @@ socketApi.io.on("connection", socket => {
             let matchWon = gameLogic.gameWon(room.boardState, room.nextToMove);
 
             room.nextToMove = room.nextToMove == "X" ? "O" : "X";
+
+            dataRooms.updateRoom(room);
             
             socketApi.io.in(room.id).emit("boardUpdate", room);
             
             if(matchWon){
                 console.log("match ended");
                 socketApi.io.in(room.id).emit("matchEnded", "");
+
+                //room.player1.leave(room.id);
+                //room.player2.leave(room.id);
+
+                dataRooms.deleteRoom(room);
             }
         })
     });
@@ -58,19 +68,23 @@ function findMatch(socket){
                 player2 = "X";
             }
 
-            let room = {
+            let room = new RoomModel.Room(socket.id + '#' + peer.id, peer, socket);
+            console.log(room);
+            /*let room = {
                 id: socket.id + '#' + peer.id,
                 boardState: ["", "", "","", "", "","", "", ""],
                 nextToMove: "X",
                 player1: peer.id,
                 player2: socket.id
-            }
+            }*/
             // join them both
+            dataRooms.insertRoom(room);
+
             peer.join(room.id);
             socket.join(room.id);
             // register rooms to their names
-            rooms[peer.id] = room;
-            rooms[socket.id] = room;
+            //rooms[peer.id] = room;
+            //rooms[socket.id] = room;
             //mandar la data de la partida
             peer.emit("matchFound", player1); 
             socket.emit("matchFound", player2);
