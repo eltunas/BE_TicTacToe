@@ -18,19 +18,18 @@ socketApi.io.on("connection", socket => {
     socket.on("findMatch", () => {
         findMatch(socket);
 
-        socket.on("move", async moveData => {
-            console.log(moveData);
+        socket.on("move", async moveData => {            
             let room = await dataRooms.getRoomByPlayerId(moveData.socketId);//rooms[moveData.socketId];
+            
             console.log(room);
+            
             room.boardState = updateBoard(room, moveData.square);
-
-            console.log(room.boardState);
 
             let matchWon = gameLogic.gameWon(room.boardState, room.nextToMove);
 
             room.nextToMove = room.nextToMove == "X" ? "O" : "X";
 
-            dataRooms.updateRoom(room);
+            await dataRooms.updateRoom(room);
             
             socketApi.io.in(room.id).emit("boardUpdate", room);
             
@@ -69,22 +68,16 @@ function findMatch(socket){
             }
 
             let room = new RoomModel.Room(socket.id + '#' + peer.id, peer, socket);
-            console.log(room);
-            /*let room = {
-                id: socket.id + '#' + peer.id,
-                boardState: ["", "", "","", "", "","", "", ""],
-                nextToMove: "X",
-                player1: peer.id,
-                player2: socket.id
-            }*/
-            // join them both
+            
             dataRooms.insertRoom(room);
 
             peer.join(room.id);
             socket.join(room.id);
+            
             // register rooms to their names
             //rooms[peer.id] = room;
             //rooms[socket.id] = room;
+
             //mandar la data de la partida
             peer.emit("matchFound", player1); 
             socket.emit("matchFound", player2);
@@ -92,7 +85,6 @@ function findMatch(socket){
     } else {
         // queue is empty, add our lone socket
         queue.push(socket);
-
     }
 }
 

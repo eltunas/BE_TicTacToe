@@ -34,7 +34,7 @@ async function updateRoom(room) {
     const clientmongo = await connection.getConnection();
     const query = { id: room.id.toString() };
     const newValues = { $set: { 
-                            nextToMove: room.nextToMove,
+                            nextToMove: room.nextToMove.toString(),
                             boardState: room.boardState
                          } };
     await clientmongo
