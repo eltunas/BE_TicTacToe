@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const dataUsers = require("../data_access/users");
-const userModel = require("../data_access/Models/UserModel");
+const userModel = require("../data_access/Models/userModel");
 
 router.get("/", async (req, res) => {
   try {

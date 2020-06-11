@@ -8,8 +8,17 @@ const client = new MongoClient(uri, {
   useNewUrlParser: true,
 });
 
+let instance = null;
+
 async function getConnection() {
-  return await client.connect().catch(err => console.error(err));
+  if (instance == null) {
+    try {
+      instance = await client.connect();
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+  return instance;
 }
 
 module.exports = { getConnection };
