@@ -5,12 +5,10 @@ const dataRooms = require("./data_access/rooms");
 const RoomModel = require("./data_access/Models/RoomModel");
 
 let socketApi = {};
-//Your socket logic here
 socketApi.io = io;
 module.exports = socketApi;
 
 let queue = [];
-let rooms = [];
 
 socketApi.io.on("connection", socket => {
 
@@ -18,7 +16,7 @@ socketApi.io.on("connection", socket => {
         findMatch(socket);
 
         socket.on("move", async moveData => {            
-            let room = await dataRooms.getRoomByPlayerId(moveData.socketId);//rooms[moveData.socketId];
+            let room = await dataRooms.getRoomByPlayerId(moveData.socketId);
             
             console.log(room);
             
@@ -73,10 +71,6 @@ function findMatch(socket){
             peer.join(room.id);
             socket.join(room.id);
             
-            // register rooms to their names
-            //rooms[peer.id] = room;
-            //rooms[socket.id] = room;
-
             //mandar la data de la partida
             peer.emit("matchFound", player1); 
             socket.emit("matchFound", player2);
