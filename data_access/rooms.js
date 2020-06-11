@@ -14,7 +14,6 @@ async function getRoomByPlayerId(playerId) {
   
 async function insertRoom(room) {
     const clientmongo = await connection.getConnection();
-    console.log("aca llego")
     const { ops } = await clientmongo
     .db("db_tic_tac_toe")
     .collection("Rooms")
@@ -39,7 +38,7 @@ async function updateRoom(room) {
                          } };
     await clientmongo
       .db("db_tic_tac_toe")
-      .collection("Users")
+      .collection("Rooms")
       .updateOne(query, newValues);
 }
 

@@ -13,7 +13,6 @@ let queue = [];
 let rooms = [];
 
 socketApi.io.on("connection", socket => {
-    console.log(socket.id + " esta conectado")
 
     socket.on("findMatch", () => {
         findMatch(socket);
@@ -40,7 +39,7 @@ socketApi.io.on("connection", socket => {
                 //room.player1.leave(room.id);
                 //room.player2.leave(room.id);
 
-                dataRooms.deleteRoom(room);
+                dataRooms.deleteRoom(room.id);
             }
         })
     });
