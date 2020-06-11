@@ -13,7 +13,6 @@ socketApi.io.on("connection", socket => {
   console.log(socket.id + " esta conectado");
 
   socket.on("findMatch", () => {
-    socketApi.io.emit("QueueUsersUpdated");
     findMatch(socket);
     socket.on("move", moveData => {
       let room = rooms[moveData.socketId];
