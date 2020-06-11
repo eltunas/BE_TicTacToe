@@ -8,4 +8,4 @@ class QueueUser {
 
 //method for User entity data access
 
-module.exports = { User };
+module.exports = { QueueUser };

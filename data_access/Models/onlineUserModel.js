@@ -7,4 +7,4 @@ class OnlineUser {
 
 //method for User entity data access
 
-module.exports = { User };
+module.exports = { OnlineUser };

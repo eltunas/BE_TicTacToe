@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
     if (req.body.googleId == null || req.body.name == null) {
         return res.status(400).json({ message: "Parametros incorrectos" })
     } else {
-        user = new onlineUserModel.User(req.body.googleId, req.body.name);
+        user = new onlineUserModel.OnlineUser(req.body.googleId, req.body.name);
     }
     try {
         const newUser = await onlineUsers.insertOnlineUser(user);
