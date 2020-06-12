@@ -14,8 +14,6 @@ socketApi.io.on("connection", socket => {
   socket.on("findMatch", () => {
     findMatch(socket);
     socket.on("move", moveData => {
-      let room = rooms[moveData.socketId];
-
       socket.on("move", async moveData => {
         let room = await dataRooms.getRoomByPlayerId(moveData.socketId);
 
