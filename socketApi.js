@@ -1,38 +1,45 @@
-let gameLogic = require("./helpers/gameLogicHelper");
-let socket_io = require("socket.io");
-let io = socket_io();
+
+const gameLogic = require('./helpers/gameLogicHelper')
+const socket_io = require('socket.io');
+const io = socket_io();
+const dataRooms = require("./data_access/rooms");
+const RoomModel = require("./data_access/Models/RoomModel");
+
 let socketApi = {};
-//Your socket logic here
 socketApi.io = io;
 module.exports = socketApi;
 
 let queue = [];
-let rooms = [];
 
 socketApi.io.on("connection", socket => {
-  console.log(socket.id + " esta conectado");
-
   socket.on("findMatch", () => {
     findMatch(socket);
     socket.on("move", moveData => {
       let room = rooms[moveData.socketId];
 
-      room.boardState = updateBoard(room, moveData.square);
 
-      console.log(room.boardState);
+        socket.on("move", async moveData => {            
+            let room = await dataRooms.getRoomByPlayerId(moveData.socketId);
+            
+            console.log(room);
+            
+            room.boardState = updateBoard(room, moveData.square);
 
-      let matchWon = gameLogic.gameWon(room.boardState, room.nextToMove);
+            let matchWon = gameLogic.gameWon(room.boardState, room.nextToMove);
 
-      room.nextToMove = room.nextToMove == "X" ? "O" : "X";
+            room.nextToMove = room.nextToMove == "X" ? "O" : "X";
 
-      socketApi.io.in(room.id).emit("boardUpdate", room);
-
-      if (matchWon) {
-        console.log("match ended");
-        socketApi.io.in(room.id).emit("matchEnded", "");
-      }
+            await dataRooms.updateRoom(room);
+            
+            socketApi.io.in(room.id).emit("boardUpdate", room);
+            
+            if(matchWon){
+                console.log("match ended");
+                socketApi.io.in(room.id).emit("matchEnded", "");
+                dataRooms.deleteRoom(room.id);
+            }
+        })
     });
-  });
 });
 
 function findMatch(socket) {
@@ -53,23 +60,19 @@ function findMatch(socket) {
         player1 = "O";
         player2 = "X";
       }
-
-      let room = {
-        id: socket.id + "#" + peer.id,
-        boardState: ["", "", "", "", "", "", "", "", ""],
-        nextToMove: "X",
-        player1: peer.id,
-        player2: socket.id,
-      };
+      
+      let room = new RoomModel.Room(socket.id + '#' + peer.id, peer, socket);
+            
+      dataRooms.insertRoom(room);
+      
       // join them both
       peer.join(room.id);
       socket.join(room.id);
-      // register rooms to their names
-      rooms[peer.id] = room;
-      rooms[socket.id] = room;
-      //mandar la data de la partida
+      
+      
       peer.emit("matchFound", player1);
       socket.emit("matchFound", player2);
+
     }
   } else {
     // queue is empty, add our lone socket
