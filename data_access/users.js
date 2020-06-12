@@ -82,7 +82,6 @@ async function getRankOne() {
     .sort(sortOptions)
     .limit(1)
     .toArray();
-  console.log(user);
   return user;
 }
 
