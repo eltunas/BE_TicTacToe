@@ -20,7 +20,10 @@ socketApi.io.on("connection", socket => {
 
       room.boardState = updateBoard(room, moveData.square);
 
-      let matchWon = gameLogic.gameWon(room.boardState, room.nextToMove);
+      let moves = room.boardState.filter(square => square != null).length;
+
+      let matchWon =
+        moves > 4 ? gameLogic.gameWon(room.boardState, room.nextToMove) : false;
 
       room.nextToMove = room.nextToMove == "X" ? "O" : "X";
 
