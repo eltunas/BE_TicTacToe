@@ -22,8 +22,7 @@ socketApi.io.on("connection", socket => {
 
       let moves = room.boardState.filter(square => square != null).length;
 
-      let matchWon =
-        moves > 4 ? gameLogic.gameWon(room.boardState, room.nextToMove) : false;
+      let winner = moves > 4 ? gameLogic.gameWon(room.boardState) : null;
 
       room.nextToMove = room.nextToMove == "X" ? "O" : "X";
 
@@ -31,9 +30,9 @@ socketApi.io.on("connection", socket => {
 
       socketApi.io.in(room.id).emit("boardUpdate", room);
 
-      if (matchWon) {
+      if (winner || moves === 9) {
         console.log("match ended");
-        socketApi.io.in(room.id).emit("matchEnded", "");
+        socketApi.io.in(room.id).emit("matchEnded", winner ? winner : null);
         dataRooms.deleteRoom(room.id);
       }
     });
