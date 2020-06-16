@@ -37,13 +37,13 @@ socketApi.io.on("connection", socket => {
           io.sockets.adapter.rooms
         );
 
-        socketApi.io.in(room.id).clients(function (error, clients) {
+        socketApi.io.in(room.id).clients((error, clients) => {
           if (clients.length > 0) {
             console.log("clients in the room: \n");
             console.log(clients);
-            clients.forEach(function (socket_id) {
+            clients.forEach(socket_id => {
               io.sockets.sockets[socket_id].leave(room.id);
-              io.sockets.sockets[socket_id].removeListener("move", moveData);
+              io.sockets.sockets[socket_id].removeListener("move", this);
               console.log(io.sockets.sockets[socket_id].eventNames());
             });
           }
