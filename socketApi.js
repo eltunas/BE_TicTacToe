@@ -37,24 +37,20 @@ socketApi.io.on("connection", socket => {
           io.sockets.adapter.rooms
         );
 
-        socketApi.io
-          .of("/")
-          .in(room.id)
-          .clients(function (error, clients) {
-            if (clients.length > 0) {
-              console.log("clients in the room: \n");
-              console.log(clients);
-              clients.forEach(function (socket_id) {
-                io.sockets.sockets[socket_id].leave(room.id);
-              });
-            }
-          });
-
+        socketApi.io.in(room.id).clients(function (error, clients) {
+          if (clients.length > 0) {
+            console.log("clients in the room: \n");
+            console.log(clients);
+            clients.forEach(function (socket_id) {
+              io.sockets.sockets[socket_id].leave(room.id);
+            });
+          }
+        });
+        await dataRooms.deleteRoom(room.id);
         console.log(
           "After removing sockets from room: ",
           io.sockets.adapter.rooms
         );
-        dataRooms.deleteRoom(room.id);
       }
     });
   });
