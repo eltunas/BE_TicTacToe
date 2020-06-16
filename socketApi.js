@@ -13,7 +13,7 @@ let queue = [];
 socketApi.io.on("connection", socket => {
   socket.on("findMatch", () => {
     findMatch(socket);
-    socket.on("move", async moveData => {
+    socket.on("move", async function moveData(moveData) {
       let room = await dataRooms.getRoomByPlayerId(moveData.socketId);
 
       room.boardState = updateBoard(room, moveData.square);
