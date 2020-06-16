@@ -66,6 +66,8 @@ function findMatch(socket) {
       peer.join(room.id);
       socket.join(room.id);
 
+      console.log("after sockets joined rooms: ", io.sockets.adapter.rooms);
+
       peer.emit("matchFound", player1);
       socket.emit("matchFound", player2);
     }
