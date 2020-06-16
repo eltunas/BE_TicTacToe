@@ -52,7 +52,7 @@ const moveData = async moveData => {
           socketApi.io.sockets.sockets[socket_id].removeAllListeners();
           socketApi.io.sockets.sockets[socket_id].on("findMatch", () => {
             findMatch(socketApi.io.sockets.sockets[socket_id]);
-            socket.on("move", data => {
+            socketApi.io.sockets.sockets[socket_id].on("move", data => {
               moveData(data);
             });
           });
