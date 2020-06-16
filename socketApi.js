@@ -13,8 +13,8 @@ let queue = [];
 socketApi.io.on("connection", socket => {
   socket.on("findMatch", () => {
     findMatch(socket);
-    socket.on("move", moveData => {
-      moveData(moveData);
+    socket.on("move", data => {
+      moveData(data);
     });
   });
 });
