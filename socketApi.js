@@ -49,9 +49,7 @@ const moveData = async moveData => {
         console.log(clients);
         clients.forEach(socket_id => {
           io.sockets.sockets[socket_id].leave(room.id);
-          io.sockets.sockets[socket_id].removeListener("move", data =>
-            moveData(data)
-          );
+          io.sockets.sockets[socket_id].off("move", data => moveData(data));
           console.log(io.sockets.sockets[socket_id].eventNames());
         });
       }
