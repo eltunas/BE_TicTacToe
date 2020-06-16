@@ -57,7 +57,7 @@ const moveData = async moveData => {
     });
 
     await dataRooms.deleteRoom(room.id);
-    console.log("events: ", io.sockets.sockets[socket_id].eventNames());
+    console.log("events: ", io.sockets.adapter.eventNames());
     console.log("After removing sockets from room: ", io.sockets.adapter.rooms);
   }
 };
