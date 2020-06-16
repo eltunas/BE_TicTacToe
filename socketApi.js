@@ -16,8 +16,6 @@ socketApi.io.on("connection", socket => {
     socket.on("move", async moveData => {
       let room = await dataRooms.getRoomByPlayerId(moveData.socketId);
 
-      console.log(room);
-
       room.boardState = updateBoard(room, moveData.square);
 
       let moves = room.boardState.filter(square => square != null).length;
