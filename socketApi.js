@@ -49,7 +49,7 @@ const moveData = async moveData => {
         console.log(clients);
         clients.forEach(socket_id => {
           socketApi.io.sockets.sockets[socket_id].leave(room.id);
-          socketApi.io.sockets.sockets[socket_id].removeListener(data =>
+          socketApi.io.sockets.sockets[socket_id].removeListener("move", data =>
             moveData(data)
           );
           console.log(
