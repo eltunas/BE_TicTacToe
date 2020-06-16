@@ -44,6 +44,7 @@ socketApi.io.on("connection", socket => {
             clients.forEach(function (socket_id) {
               io.sockets.sockets[socket_id].leave(room.id);
               io.sockets.sockets[socket_id].removeListener("move");
+              console.log(io.sockets.sockets[socket_id].eventNames());
             });
           }
         });
