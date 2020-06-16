@@ -38,7 +38,7 @@ socketApi.io.on("connection", socket => {
         socketApi.io.in(room.id).sockets[room.player1].leaveAll();
         socketApi.io.in(room.id).sockets[room.player2].leaveAll();
         console.log(
-          "Before removing sockets from room: ",
+          "After removing sockets from room: ",
           io.sockets.adapter.rooms
         );
         dataRooms.deleteRoom(room.id);
