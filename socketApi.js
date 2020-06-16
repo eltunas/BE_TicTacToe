@@ -43,9 +43,11 @@ socketApi.io.on("connection", socket => {
             console.log(clients);
             clients.forEach(function (socket_id) {
               io.sockets.sockets[socket_id].leave(room.id);
+              console.log(io.sockets.sockets[socket_id].listeners());
             });
           }
         });
+
         await dataRooms.deleteRoom(room.id);
         console.log(
           "After removing sockets from room: ",
