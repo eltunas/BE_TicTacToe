@@ -33,6 +33,16 @@ socketApi.io.on("connection", socket => {
       if (winner || moves === 9) {
         console.log("match ended");
         socketApi.io.in(room.id).emit("matchEnded", winner ? winner : null);
+        console.log(
+          "Before removing sockets from room: ",
+          io.sockets.adapter.rooms
+        );
+        socketApi.io.in(room.id).sockets[room.player1].leaveAll();
+        socketApi.io.in(room.id).sockets[room.player2].leaveAll();
+        console.log(
+          "Before removing sockets from room: ",
+          io.sockets.adapter.rooms
+        );
         dataRooms.deleteRoom(room.id);
       }
     });
@@ -65,8 +75,6 @@ function findMatch(socket) {
       // join them both
       peer.join(room.id);
       socket.join(room.id);
-
-      console.log("after sockets joined rooms: ", io.sockets.adapter.rooms);
 
       peer.emit("matchFound", player1);
       socket.emit("matchFound", player2);
