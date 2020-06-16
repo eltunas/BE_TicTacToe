@@ -59,6 +59,7 @@ const moveData = (moveData) => {
       io.sockets.adapter.rooms
     );
   }
+}
 
 function findMatch(socket) {
   if (queue.length > 0) {
