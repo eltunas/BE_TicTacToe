@@ -48,16 +48,17 @@ const moveData = async moveData => {
         console.log("clients in the room: \n");
         console.log(clients);
         clients.forEach(socket_id => {
-          io.sockets.sockets[socket_id].leave(room.id);
-          io.sockets.sockets[socket_id].removeListener("move", data =>
-            moveData(data)
+          socketApi.io.sockets.sockets[socket_id].leave(room.id);
+          socketApi.io.sockets.sockets[socket_id].removeAllListeners();
+          console.log(
+            "events: ",
+            socketApi.io.sockets.sockets[socket_id].eventNames()
           );
         });
       }
     });
 
     await dataRooms.deleteRoom(room.id);
-    console.log("events: ", io.sockets.adapter.eventNames());
     console.log("After removing sockets from room: ", io.sockets.adapter.rooms);
   }
 };
