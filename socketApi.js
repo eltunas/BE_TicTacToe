@@ -50,8 +50,8 @@ const moveData = async moveData => {
         clients.forEach(socket_id => {
           socketApi.io.sockets.sockets[socket_id].leave(room.id);
           socketApi.io.sockets.sockets[socket_id].removeAllListeners();
-          socketApi.io.sockets.sockets[socket_id].on("move", data => {
-            moveData(data);
+          socketApi.io.sockets.sockets[socket_id].on("findMatch", () => {
+            findMatch(socket);
           });
           console.log(
             "events: ",
