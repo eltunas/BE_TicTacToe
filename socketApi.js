@@ -17,7 +17,7 @@ socketApi.io.on("connection", socket => {
   });
 });
 
-const moveData = (moveData) => {
+const moveData = async moveData => {
   let room = await dataRooms.getRoomByPlayerId(moveData.socketId);
 
   room.boardState = updateBoard(room, moveData.square);
@@ -54,12 +54,9 @@ const moveData = (moveData) => {
     });
 
     await dataRooms.deleteRoom(room.id);
-    console.log(
-      "After removing sockets from room: ",
-      io.sockets.adapter.rooms
-    );
+    console.log("After removing sockets from room: ", io.sockets.adapter.rooms);
   }
-}
+};
 
 function findMatch(socket) {
   if (queue.length > 0) {
