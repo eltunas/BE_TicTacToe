@@ -28,11 +28,16 @@ socketApi.io.on("connection", socket => {
 
       await dataRooms.updateRoom(room);
 
-      socketApi.io.in(room.id).emit("boardUpdate", room);
+      let playerToUpdate =
+        room.player1 === moveData.socketId ? room.player1 : room.player2;
+
+      socketApi.io
+        .in(room.id)
+        .sockets[playerToUpdate].emit("boardUpdate", room);
 
       if (winner || moves === 9) {
         console.log("match ended");
-        socketApi.io.in(room.id).emit("matchEnded", winner ? winner : null);
+        socketApi.io.in(room.id).emit("matchEnded", winner);
         dataRooms.deleteRoom(room.id);
       }
     });
