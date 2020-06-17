@@ -11,9 +11,6 @@ async function getRoomByPlayerId(playerId) {
         { player2Id: playerId.toString() },
       ],
     });
-
-  console.log(room);
-
   return room;
 }
 

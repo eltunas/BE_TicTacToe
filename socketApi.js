@@ -11,33 +11,61 @@ module.exports = socketApi;
 let queue = [];
 
 socketApi.io.on("connection", socket => {
-  socket.on("findMatch", () => {
-    findMatch(socket);
-    socket.on("move", async moveData => {
-      let room = await dataRooms.getRoomByPlayerId(moveData.socketId);
+  socket.on("findMatch", () => subscribeToGame(socket));
+});
 
-      console.log(room);
+const subscribeToGame = socket => {
+  findMatch(socket);
+  socket.on("move", data => {
+    moveData(data);
+  });
+};
 
-      room.boardState = updateBoard(room, moveData.square);
+const moveData = async moveData => {
+  let room = await dataRooms.getRoomByPlayerId(moveData.socketId);
 
-      let moves = room.boardState.filter(square => square != null).length;
+  room.boardState = updateBoard(room, moveData.square);
 
-      let winner = moves > 4 ? gameLogic.gameWon(room.boardState) : null;
+  let moves = room.boardState.filter(square => square != null).length;
 
-      room.nextToMove = room.nextToMove == "X" ? "O" : "X";
+  let winner = moves > 4 ? gameLogic.gameWon(room.boardState) : null;
 
-      await dataRooms.updateRoom(room);
+  room.nextToMove = room.nextToMove == "X" ? "O" : "X";
 
-      socketApi.io.in(room.id).emit("boardUpdate", room);
+  await dataRooms.updateRoom(room);
 
-      if (winner || moves === 9) {
-        console.log("match ended");
-        socketApi.io.in(room.id).emit("matchEnded", winner ? winner : null);
-        dataRooms.deleteRoom(room.id);
+  socketApi.io.in(room.id).emit("boardUpdate", room);
+
+  if (winner || moves === 9) {
+    console.log("match ended");
+
+    socketApi.io.in(room.id).emit("matchEnded", winner ? winner : null);
+    console.log(
+      "Before removing sockets from room: ",
+      io.sockets.adapter.rooms
+    );
+
+    socketApi.io.in(room.id).clients((error, clients) => {
+      if (clients.length > 0) {
+        console.log("clients in the room: \n");
+        console.log(clients);
+        clients.forEach(socket_id => {
+          const player = socketApi.io.sockets.sockets[socket_id];
+          player.leave(room.id);
+          player.removeAllListeners();
+          player.on("findMatch", () => subscribeToGame(player));
+          console.log(
+            "events: ",
+            socketApi.io.sockets.sockets[socket_id].eventNames()
+          );
+        });
       }
     });
-  });
-});
+
+    await dataRooms.deleteRoom(room.id);
+    console.log("After removing sockets from room: ", io.sockets.adapter.rooms);
+  }
+};
 
 function findMatch(socket) {
   if (queue.length > 0) {
@@ -50,7 +78,8 @@ function findMatch(socket) {
       let player1;
       let player2;
 
-      if (Math.random > 0.5) {
+      let random = Math.random;
+      if (random > 0.5) {
         player1 = "X";
         player2 = "O";
       } else {
@@ -58,6 +87,9 @@ function findMatch(socket) {
         player2 = "X";
       }
 
+      console.log(random);
+      console.log("player 1: ", player1);
+      console.log("player 2: ", player2);
       let room = new RoomModel.Room(socket.id + "#" + peer.id, peer, socket);
 
       dataRooms.insertRoom(room);
