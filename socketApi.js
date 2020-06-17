@@ -11,7 +11,7 @@ module.exports = socketApi;
 let queue = [];
 
 socketApi.io.on("connection", socket => {
-  socket.on("findMatch", subscribeToGame(socket));
+  socket.on("findMatch", () => subscribeToGame(socket));
 });
 
 const subscribeToGame = socket => {
