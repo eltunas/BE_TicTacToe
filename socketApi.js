@@ -11,13 +11,15 @@ module.exports = socketApi;
 let queue = [];
 
 socketApi.io.on("connection", socket => {
-  socket.on("findMatch", () => {
-    findMatch(socket);
-    socket.on("move", data => {
-      moveData(data);
-    });
-  });
+  socket.on("findMatch", subscribeToGame(socket));
 });
+
+const subscribeToGame = socket => {
+  findMatch(socket);
+  socket.on("move", data => {
+    moveData(data);
+  });
+};
 
 const moveData = async moveData => {
   let room = await dataRooms.getRoomByPlayerId(moveData.socketId);
@@ -48,14 +50,10 @@ const moveData = async moveData => {
         console.log("clients in the room: \n");
         console.log(clients);
         clients.forEach(socket_id => {
-          socketApi.io.sockets.sockets[socket_id].leave(room.id);
-          socketApi.io.sockets.sockets[socket_id].removeAllListeners();
-          socketApi.io.sockets.sockets[socket_id].on("findMatch", () => {
-            findMatch(socketApi.io.sockets.sockets[socket_id]);
-            socketApi.io.sockets.sockets[socket_id].on("move", data => {
-              moveData(data);
-            });
-          });
+          const player = socketApi.io.sockets.sockets[socket_id];
+          player.leave(room.id);
+          player.removeAllListeners();
+          player.on("findMatch", () => subscribeToGame(player));
           console.log(
             "events: ",
             socketApi.io.sockets.sockets[socket_id].eventNames()
