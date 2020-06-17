@@ -78,7 +78,7 @@ function findMatch(socket) {
       let player1;
       let player2;
 
-      let random = Math.random;
+      let random = Math.random();
       if (random > 0.5) {
         player1 = "X";
         player2 = "O";
