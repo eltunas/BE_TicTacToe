@@ -78,7 +78,8 @@ function findMatch(socket) {
       let player1;
       let player2;
 
-      if (Math.random > 0.5) {
+      let random = Math.random();
+      if (random > 0.5) {
         player1 = "X";
         player2 = "O";
       } else {
@@ -86,6 +87,7 @@ function findMatch(socket) {
         player2 = "X";
       }
 
+      console.log(random);
       console.log("player 1: ", player1);
       console.log("player 2: ", player2);
       let room = new RoomModel.Room(socket.id + "#" + peer.id, peer, socket);
