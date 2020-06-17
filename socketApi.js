@@ -86,6 +86,8 @@ function findMatch(socket) {
         player2 = "X";
       }
 
+      console.log("player 1: ", player1);
+      console.log("player 2: ", player2);
       let room = new RoomModel.Room(socket.id + "#" + peer.id, peer, socket);
 
       dataRooms.insertRoom(room);
