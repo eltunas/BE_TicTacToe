@@ -13,12 +13,11 @@ module.exports = socketApi;
 let queue = [];
 
 socketApi.io.on("connection", socket => {
-  socket.on("findMatch", (gameInfo) => subscribeToGame(socket, gameInfo));
+  socket.on("findMatch", (userInfo) => subscribeToGame(socket, userInfo));
 });
 
-const subscribeToGame = async (socket, gameInfo) => {
-  console.log(gameInfo);
-  await findMatch(socket, gameInfo);
+const subscribeToGame = async (socket, userInfo) => {
+  await findMatch(socket, userInfo);
   socket.on("move", data => {
     moveData(data);
   });
@@ -49,7 +48,7 @@ const moveData = async moveData => {
   }
 };
 
-async function findMatch(socket, gameInfo) {
+async function findMatch(socket, userInfo) {
   let peer = await dataQueue.getSingleQueueUser();
   console.log(peer);
   if (peer!=null) {    
@@ -82,10 +81,9 @@ async function findMatch(socket, gameInfo) {
       await dataQueue.deleteQueueUser(peer.googleId);
     }
   } else {
-    console.log(gameInfo.gameInfo);
     dataQueue.insertQueueUser({
-      googleId: gameInfo.gameInfo.googleId,
-      name: gameInfo.gameInfo.name,
+      googleId: userInfo.googleId,
+      name: userInfo.name,
       socketId: socket.id
     });
   }
