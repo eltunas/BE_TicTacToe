@@ -42,7 +42,7 @@ const moveData = async moveData => {
         player.removeAllListeners();
         player.on("findMatch", () => subscribeToGame(player));
       });
-      
+
     });
 
     await dataRooms.deleteRoom(room.id);
@@ -69,7 +69,7 @@ async function findMatch(socket, gameInfo) {
       console.log(random);
       console.log("player 1: ", player1);
       console.log("player 2: ", player2);
-      let room = new RoomModel.Room(socket.id + "#" + peer.socketId, peer, socket);
+      let room = new RoomModel.Room(socket.id + "#" + peer.socketId, peerSocket, socket);
 
       dataRooms.insertRoom(room);
 
