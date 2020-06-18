@@ -3,6 +3,8 @@ const socket_io = require("socket.io");
 const io = socket_io();
 const dataRooms = require("./data_access/rooms");
 const RoomModel = require("./data_access/Models/RoomModel");
+const dataOnline = require("./data_access/onlineUsers");
+const dataQueue = require("./data_access/queueUsers");
 
 let socketApi = {};
 socketApi.io = io;
@@ -11,11 +13,12 @@ module.exports = socketApi;
 let queue = [];
 
 socketApi.io.on("connection", socket => {
-  socket.on("findMatch", () => subscribeToGame(socket));
+  socket.on("findMatch", (gameInfo) => subscribeToGame(socket, gameInfo));
 });
 
-const subscribeToGame = socket => {
-  findMatch(socket);
+const subscribeToGame = async (socket, gameInfo) => {
+  console.log(gameInfo);
+  await findMatch(socket, gameInfo);
   socket.on("move", data => {
     moveData(data);
   });
@@ -53,7 +56,7 @@ const moveData = async moveData => {
           const player = socketApi.io.sockets.sockets[socket_id];
           player.leave(room.id);
           player.removeAllListeners();
-          player.on("findMatch", () => subscribeToGame(player));
+          player.on("findMatch", (gameInfo) => subscribeToGame(player, gameInfo));
           console.log(
             "events: ",
             socketApi.io.sockets.sockets[socket_id].eventNames()
@@ -67,14 +70,11 @@ const moveData = async moveData => {
   }
 };
 
-function findMatch(socket) {
-  if (queue.length > 0) {
-    console.log("match found");
-    // somebody is in queue, pair them!
-    let peer = queue.pop();
-    if (peer.id == socket.id) {
-      queue.push(peer);
-    } else {
+async function findMatch(socket, gameInfo) {
+  let peer = await dataQueue.getSingleQueueUser();
+  console.log(peer);
+  if (peer!=null) {    
+    if (peer.socketId != socket.id){
       let player1;
       let player2;
 
@@ -86,24 +86,29 @@ function findMatch(socket) {
         player1 = "O";
         player2 = "X";
       }
-
+      peerSocket = socketApi.io.sockets.sockets[peer.socketId];
       console.log(random);
       console.log("player 1: ", player1);
       console.log("player 2: ", player2);
-      let room = new RoomModel.Room(socket.id + "#" + peer.id, peer, socket);
+      let room = new RoomModel.Room(socket.id + "#" + peer.socketId, peer, socket);
 
       dataRooms.insertRoom(room);
 
-      // join them both
-      peer.join(room.id);
+      peerSocket.join(room.id);
       socket.join(room.id);
 
-      peer.emit("matchFound", player1);
+      peerSocket.emit("matchFound", player1);
       socket.emit("matchFound", player2);
+
+      await dataQueue.deleteQueueUser(peer.googleId);
     }
   } else {
-    // queue is empty, add our lone socket
-    queue.push(socket);
+    console.log(gameInfo.gameInfo);
+    dataQueue.insertQueueUser({
+      googleId: gameInfo.gameInfo.googleId,
+      name: gameInfo.gameInfo.name,
+      socketId: socket.id
+    });
   }
 }
 

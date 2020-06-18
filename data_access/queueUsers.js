@@ -19,6 +19,27 @@ async function getQueueUser(googleId) {
   return user;
 }
 
+async function getSingleQueueUser() {
+  const clientmongo = await connection.getConnection();
+  const user = await clientmongo
+    .db("db_tic_tac_toe")
+    .collection("Queue")
+    .findOne();
+  return user;
+}
+
+async function popQueueUser() {
+  const clientmongo = await connection.getConnection();
+  const user = await clientmongo
+    .db("db_tic_tac_toe")
+    .collection("Queue")
+    .findAndModify({
+      remove: true  
+    })
+    .limit(1);
+  return user;
+}
+
 async function insertQueueUser(QueueUser) {
   const clientmongo = await connection.getConnection();
   const { ops } = await clientmongo
@@ -41,4 +62,5 @@ module.exports = {
   getQueueUser,
   insertQueueUser,
   deleteQueueUser,
+  getSingleQueueUser
 };
