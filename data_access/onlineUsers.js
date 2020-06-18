@@ -19,6 +19,15 @@ async function getOnlineUser(googleId) {
   return user;
 }
 
+async function getOnlineUserBySocketId(socketId) {
+  const clientmongo = await connection.getConnection();
+  const user = await clientmongo
+    .db("db_tic_tac_toe")
+    .collection("OnlineUsers")
+    .findOne({ socketId: socketId.toString() });
+  return user;
+}
+
 async function insertOnlineUser(onlineUser) {
   const clientmongo = await connection.getConnection();
   const { ops } = await clientmongo
@@ -41,4 +50,5 @@ module.exports = {
   getOnlineUser,
   insertOnlineUser,
   deleteOnlineUser,
+  getOnlineUserBySocketId
 };
