@@ -13,6 +13,8 @@ let queue = [];
 
 socketApi.io.on("connection", socket => {
   socket.on("findMatch", (userInfo) => subscribeToGame(socket, userInfo));
+
+  socket.on('disconnect', () => handleDisconnection());
 });
 
 const subscribeToGame = async (socket, userInfo) => {
@@ -86,4 +88,8 @@ async function findMatch(socket, userInfo) {
       socketId: socket.id
     });
   }
+}
+
+async function handleDisconnection(){
+
 }
