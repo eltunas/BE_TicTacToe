@@ -3,7 +3,6 @@ const socket_io = require("socket.io");
 const io = socket_io();
 const dataRooms = require("./data_access/rooms");
 const RoomModel = require("./data_access/Models/RoomModel");
-const dataOnline = require("./data_access/onlineUsers");
 const dataQueue = require("./data_access/queueUsers");
 
 let socketApi = {};
