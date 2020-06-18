@@ -59,11 +59,10 @@ async function updateRoomWithSteroids(room, { socketId, square }) {
     },
   };
   const options = { returnOriginal: false };
-  const updatedRoom = await clientmongo.findOneAndUpdate(
-    query,
-    newValues,
-    options
-  );
+  const updatedRoom = await clientmongo
+    .db("db_tic_tac_toe")
+    .collection("Rooms")
+    .findOneAndUpdate(query, newValues, options);
   return updatedRoom;
 }
 
