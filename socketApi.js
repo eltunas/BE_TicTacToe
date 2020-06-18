@@ -12,7 +12,7 @@ module.exports = socketApi;
 let queue = [];
 
 socketApi.io.on("connection", socket => {
-  socket.on("findMatch", (userInfo) => subscribeToGame(socket, userInfo));
+  socket.on("findMatch", userInfo => subscribeToGame(socket, userInfo));
 });
 
 const subscribeToGame = async (socket, userInfo) => {
@@ -33,14 +33,12 @@ const moveData = async moveData => {
   if (winner || room.moves === 9) {
     socketApi.io.in(room.id).emit("matchEnded", winner);
     socketApi.io.in(room.id).clients((error, clients) => {
-
       clients.forEach(socket_id => {
-        const player = socketApi.io.sockets.sockets[socket_id];
-        player.leave(room.id);
-        player.removeAllListeners();
-        player.on("findMatch", () => subscribeToGame(player));
+        const socket = socketApi.io.sockets.sockets[socket_id];
+        socket.leave(room.id);
+        socket.removeAllListeners();
+        socket.on("findMatch", userInfo => subscribeToGame(socket, userInfo));
       });
-
     });
 
     await dataRooms.deleteRoom(room.id);
@@ -50,8 +48,8 @@ const moveData = async moveData => {
 async function findMatch(socket, userInfo) {
   let peer = await dataQueue.getSingleQueueUser();
   console.log(peer);
-  if (peer!=null) {    
-    if (peer.socketId != socket.id){
+  if (peer != null) {
+    if (peer.socketId != socket.id) {
       let player1;
       let player2;
 
@@ -67,7 +65,11 @@ async function findMatch(socket, userInfo) {
       console.log(random);
       console.log("player 1: ", player1);
       console.log("player 2: ", player2);
-      let room = new RoomModel.Room(socket.id + "#" + peer.socketId, peerSocket, socket);
+      let room = new RoomModel.Room(
+        socket.id + "#" + peer.socketId,
+        peerSocket,
+        socket
+      );
 
       dataRooms.insertRoom(room);
 
@@ -80,10 +82,10 @@ async function findMatch(socket, userInfo) {
       await dataQueue.deleteQueueUser(peer.googleId);
     }
   } else {
-    dataQueue.insertQueueUser({
+    await dataQueue.insertQueueUser({
       googleId: userInfo.googleId,
       name: userInfo.name,
-      socketId: socket.id
+      socketId: socket.id,
     });
   }
 }
