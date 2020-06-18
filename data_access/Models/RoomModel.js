@@ -6,6 +6,7 @@ class Room {
         this.nextToMove = "X",
         this.player1Id = player1.id,
         this.player2Id = player2.id
+        this.moves = 0;
     }
 }
 

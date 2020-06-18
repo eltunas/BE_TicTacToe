@@ -38,6 +38,7 @@ async function updateRoom(room) {
     $set: {
       nextToMove: room.nextToMove.toString(),
       boardState: room.boardState,
+      moves: room.moves + 1,
     },
   };
   await clientmongo
@@ -46,4 +47,35 @@ async function updateRoom(room) {
     .updateOne(query, newValues);
 }
 
-module.exports = { getRoomByPlayerId, insertRoom, deleteRoom, updateRoom };
+async function updateRoomWithSteroids(room, { socketId, square }) {
+  const clientmongo = await connection.getConnection();
+  const query = {
+    $or: [
+      { player1Id: socketId.toString() },
+      { player2Id: socketId.toString() },
+    ],
+  };
+  room.boardState[square] = room.nextToMove;
+  const newValues = {
+    $set: {
+      nextToMove: room.nextToMove === "X" ? "O" : "X",
+      boardState: room.boardState,
+      moves: room.moves + 1,
+    },
+  };
+  const options = { returnOriginal: false };
+  const updatedRoom = await clientmongo.findOneAndUpdate(
+    query,
+    newValues,
+    options
+  );
+  return updatedRoom;
+}
+
+module.exports = {
+  getRoomByPlayerId,
+  insertRoom,
+  deleteRoom,
+  updateRoom,
+  updateRoomWithSteroids,
+};
