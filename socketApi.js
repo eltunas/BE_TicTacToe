@@ -22,48 +22,24 @@ const subscribeToGame = socket => {
 };
 
 const moveData = async moveData => {
+  console.log("moveData: ", moveData);
   let room = await dataRooms.getRoomByPlayerId(moveData.socketId);
-
-  room.boardState = updateBoard(room, moveData.square);
-
-  let moves = room.boardState.filter(square => square != null).length;
-
-  let winner = moves > 4 ? gameLogic.gameWon(room.boardState) : null;
-
-  room.nextToMove = room.nextToMove == "X" ? "O" : "X";
-
-  await dataRooms.updateRoom(room);
-
+  room = await dataRooms.updateRoomWithSteroids(room, moveData);
+  console.log("updatedRoom: ", room);
+  let winner = room.moves > 4 ? gameLogic.gameWon(room.boardState) : null;
   socketApi.io.in(room.id).emit("boardUpdate", room);
 
-  if (winner || moves === 9) {
-    console.log("match ended");
-
-    socketApi.io.in(room.id).emit("matchEnded", winner ? winner : null);
-    console.log(
-      "Before removing sockets from room: ",
-      io.sockets.adapter.rooms
-    );
-
+  if (winner || room.moves === 9) {
+    socketApi.io.in(room.id).emit("matchEnded", winner);
     socketApi.io.in(room.id).clients((error, clients) => {
-      if (clients.length > 0) {
-        console.log("clients in the room: \n");
-        console.log(clients);
-        clients.forEach(socket_id => {
-          const player = socketApi.io.sockets.sockets[socket_id];
-          player.leave(room.id);
-          player.removeAllListeners();
-          player.on("findMatch", () => subscribeToGame(player));
-          console.log(
-            "events: ",
-            socketApi.io.sockets.sockets[socket_id].eventNames()
-          );
-        });
-      }
+      clients.forEach(socket_id => {
+        const player = socketApi.io.sockets.sockets[socket_id];
+        player.leave(room.id);
+        player.removeAllListeners();
+        player.on("findMatch", () => subscribeToGame(player));
+      });
     });
-
     await dataRooms.deleteRoom(room.id);
-    console.log("After removing sockets from room: ", io.sockets.adapter.rooms);
   }
 };
 
@@ -105,9 +81,4 @@ function findMatch(socket) {
     // queue is empty, add our lone socket
     queue.push(socket);
   }
-}
-
-function updateBoard(room, newMove) {
-  room.boardState[newMove] = room.nextToMove;
-  return room.boardState;
 }
