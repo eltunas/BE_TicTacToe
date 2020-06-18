@@ -49,12 +49,7 @@ async function updateRoom(room) {
 
 async function updateRoomWithSteroids(room, { socketId, square }) {
   const clientmongo = await connection.getConnection();
-  const query = {
-    $or: [
-      { player1Id: socketId.toString() },
-      { player2Id: socketId.toString() },
-    ],
-  };
+  const query = { id: room.id };
   room.boardState[square] = room.nextToMove;
   const newValues = {
     $set: {

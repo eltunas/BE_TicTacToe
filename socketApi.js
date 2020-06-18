@@ -22,8 +22,10 @@ const subscribeToGame = socket => {
 };
 
 const moveData = async moveData => {
-  let room = await dataRooms.updateRoomWithSteroids(room, moveData);
-  console.log(room);
+  console.log("moveData: ", moveData);
+  let room = await dataRooms.getRoomByPlayerId(moveData.socketId);
+  room = await dataRooms.updateRoomWithSteroids(room, moveData);
+  console.log("updatedRoom: ", room);
   let winner = room.moves > 4 ? gameLogic.gameWon(room.boardState) : null;
   socketApi.io.in(room.id).emit("boardUpdate", room);
 
