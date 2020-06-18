@@ -36,11 +36,13 @@ const moveData = async moveData => {
     socketApi.io.in(room.id).emit("matchEnded", winner);
     socketApi.io.in(room.id).clients((error, clients) => {
 
-    clients.forEach(socket_id => {
-      const player = socketApi.io.sockets.sockets[socket_id];
-      player.leave(room.id);
-      player.removeAllListeners();
-      player.on("findMatch", () => subscribeToGame(player));
+      clients.forEach(socket_id => {
+        const player = socketApi.io.sockets.sockets[socket_id];
+        player.leave(room.id);
+        player.removeAllListeners();
+        player.on("findMatch", () => subscribeToGame(player));
+      });
+      
     });
 
     await dataRooms.deleteRoom(room.id);
