@@ -13,10 +13,10 @@ let queue = [];
 
 socketApi.io.on("connection", socket => {
   socket.on("findMatch", userInfo => subscribeToGame(socket, userInfo));
-  socket.on("newUserOnline", () => updateUsersOnline());
+  socket.on("newUserOnline", socket => updateUsersOnline(socket));
 });
 
-const updateUsersOnline = () => {
+const updateUsersOnline = socket => {
   socket.broadcast.emit("updateUsersOnline");
 };
 
