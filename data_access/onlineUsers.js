@@ -42,7 +42,7 @@ async function deleteOnlineUserBySocketId(socketId) {
   await clientmongo
     .db("db_tic_tac_toe")
     .collection("OnlineUsers")
-    .deleteOne({ socketId: googleId });
+    .deleteOne({ socketId: socketId });
 }
 
 module.exports = {
