@@ -68,10 +68,8 @@ async function getRankOne() {
 }
 
 module.exports = {
-  getUsers,
   getUser,
   insertUser,
-  deleteUser,
   updateWins,
   updateTies,
   updateLosses,
