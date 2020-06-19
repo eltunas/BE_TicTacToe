@@ -1,15 +1,5 @@
 const connection = require("./mongo_connection");
 
-async function getUsers() {
-  const clientmongo = await connection.getConnection();
-  const collection = await clientmongo
-    .db("db_tic_tac_toe")
-    .collection("Users")
-    .find()
-    .toArray();
-  return collection;
-}
-
 async function getUser(googleId) {
   const clientmongo = await connection.getConnection();
   const user = await clientmongo
@@ -26,14 +16,6 @@ async function insertUser(user) {
     .collection("Users")
     .insertOne(user);
   return ops[0];
-}
-
-async function deleteUser(googleId) {
-  const clientmongo = await connection.getConnection();
-  await clientmongo
-    .db("db_tic_tac_toe")
-    .collection("Users")
-    .deleteOne({ googleId: googleId.toString() });
 }
 
 async function updateWins(user) {
@@ -86,10 +68,8 @@ async function getRankOne() {
 }
 
 module.exports = {
-  getUsers,
   getUser,
   insertUser,
-  deleteUser,
   updateWins,
   updateTies,
   updateLosses,

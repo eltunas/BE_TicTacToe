@@ -12,10 +12,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", getOnlineUser, (req, res) => {
-  res.json(res.user);
-});
-
 router.post("/", getDuplicateUser, async (req, res) => {
   let user;
   if (
@@ -38,29 +34,6 @@ router.post("/", getDuplicateUser, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
-router.delete("/:id", getOnlineUser, async (req, res) => {
-  try {
-    await onlineUsers.deleteOnlineUser(res.user.googleId);
-    res.status(200).json({ message: `Deleted user ${res.user.googleId}` });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-async function getOnlineUser(req, res, next) {
-  let user;
-  try {
-    user = await onlineUsers.getOnlineUser(req.params.id);
-    if (user == null) {
-      return res.status(404).json({ message: "cannot find online user" });
-    }
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
-  }
-  res.user = user;
-  next();
-}
 
 async function getDuplicateUser(req, res, next) {
   let user;

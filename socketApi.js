@@ -2,6 +2,8 @@ const gameLogic = require("./helpers/gameLogicHelper");
 const socket_io = require("socket.io");
 const io = socket_io();
 const dataRooms = require("./data_access/rooms");
+const dataOnlineUsers = require("./data_access/onlineUsers");
+const dataQueueUsers = require("./data_access/queueUsers");
 const RoomModel = require("./data_access/Models/RoomModel");
 const dataQueue = require("./data_access/queueUsers");
 
@@ -15,18 +17,19 @@ socketApi.io.on("connection", socket => {
 
 const subscribeToTicTaeToe = socket => {
   socket.on("findMatch", userInfo => subscribeToGame(socket, userInfo));
-  socket.on('disconnect', () => handleDisconnection(socket));
+  socket.on("disconnect", () => handleDisconnection(socket));
   socket.on("newUserOnline", () => subscribeToOnlineUsers());
   socket.on("newQueueUser", () => subscribeToQueueUsers());
 };
 
-
-const subscribeToOnlineUsers = () => {
-  socketApi.io.emit("updateOnlineUsers");
+const subscribeToOnlineUsers = async () => {
+  const onlineUsers = await dataOnlineUsers.getOnlineUsers();
+  socketApi.io.emit("updateOnlineUsers", onlineUsers);
 };
 
-const subscribeToQueueUsers = () => {
-  socketApi.io.emit("updateQueueUsers");
+const subscribeToQueueUsers = async () => {
+  const queueUsers = await dataQueueUsers.getQueueUsers();
+  socketApi.io.emit("updateQueueUsers", queueUsers);
 };
 
 const subscribeToGame = async (socket, userInfo) => {
@@ -39,7 +42,7 @@ const subscribeToGame = async (socket, userInfo) => {
 const moveData = async moveData => {
   console.log("moveData: ", moveData);
   let room = await dataRooms.getRoomByPlayerId(moveData.socketId);
-  room = await dataRooms.updateRoomWithSteroids(room, moveData);
+  room = await dataRooms.updateRoom(room, moveData);
   console.log("updatedRoom: ", room);
   let winner = room.moves > 4 ? gameLogic.gameWon(room.boardState) : null;
   socketApi.io.in(room.id).emit("boardUpdate", room);
@@ -95,7 +98,7 @@ async function findMatch(socket, userInfo) {
       peerSocket.emit("matchFound", player1);
       socket.emit("matchFound", player2);
 
-      await dataQueue.deleteQueueUser(peer.googleId);
+      await dataQueue.deleteQueueUserBySocketId(peer.socketId);
     }
   } else {
     await dataQueue.insertQueueUser({
@@ -106,20 +109,24 @@ async function findMatch(socket, userInfo) {
   }
 }
 
-async function handleDisconnection(socket){
+async function handleDisconnection(socket) {
   let room = await dataRooms.getRoomByPlayerId(socket.id);
+  await dataOnlineUsers.deleteOnlineUserBySocketId(socket.id);
+  await dataQueueUsers.deleteQueueUserBySocketId(socket.id);
+  await subscribeToOnlineUsers();
+  await subscribeToQueueUsers();
 
-  if(room != null){
+  if (room != null) {
     endMatch(room, socket.id);
   }
 }
 
-async function endMatch(room, disconnectedPlayer){
+async function endMatch(room, disconnectedPlayer) {
   let winner = null;
 
-  if(room.player1Id == disconnectedPlayer){
+  if (room.player1Id == disconnectedPlayer) {
     winner = room.player2Token;
-  }else{
+  } else {
     winner = room.player1Token;
   }
 
