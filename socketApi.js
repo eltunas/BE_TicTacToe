@@ -22,12 +22,12 @@ const subscribeToTicTaeToe = socket => {
   socket.on("newQueueUser", () => subscribeToQueueUsers());
 };
 
-const subscribeToOnlineUsers = () => {
+const subscribeToOnlineUsers = async () => {
   const onlineUsers = await dataOnlineUsers.getOnlineUsers();
   socketApi.io.emit("updateOnlineUsers", onlineUsers);
 };
 
-const subscribeToQueueUsers = () => {
+const subscribeToQueueUsers = async () => {
   const queueUsers = await dataQueueUsers.getQueueUsers();
   socketApi.io.emit("updateQueueUsers", queueUsers);
 };
