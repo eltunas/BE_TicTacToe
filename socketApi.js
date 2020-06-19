@@ -17,7 +17,18 @@ socketApi.io.on("connection", socket => {
 
   socket.on('disconnect', () => handleDisconnection(socket));
 
+  socket.on("newUserOnline", () => subscribeToOnlineUsers());
+  socket.on("newQueueUser", () => subscribeToQueueUsers());
+
 });
+
+const subscribeToOnlineUsers = () => {
+  socketApi.io.emit("updateOnlineUsers");
+};
+
+const subscribeToQueueUsers = () => {
+  socketApi.io.emit("updateQueueUsers");
+};
 
 const subscribeToGame = async (socket, userInfo) => {
   await findMatch(socket, userInfo);
