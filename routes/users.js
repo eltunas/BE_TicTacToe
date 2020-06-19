@@ -3,19 +3,6 @@ const router = express.Router();
 const dataUsers = require("../data_access/users");
 const userModel = require("../data_access/Models/userModel");
 
-router.get("/", async (req, res) => {
-  try {
-    const users = await dataUsers.getUsers();
-    res.json(users);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-router.get("/:id", getUser, (req, res) => {
-  res.json(res.user);
-});
-
 router.post("/", getDuplicateUser, async (req, res) => {
   let user;
   if (
@@ -34,15 +21,6 @@ router.post("/", getDuplicateUser, async (req, res) => {
   try {
     const newUser = await dataUsers.insertUser(user);
     res.status(201).json(newUser);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-router.delete("/:id", getUser, async (req, res) => {
-  try {
-    await dataUsers.deleteUser(res.user.googleId);
-    res.status(200).json({ message: `Deleted user ${res.user.googleId}` });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
