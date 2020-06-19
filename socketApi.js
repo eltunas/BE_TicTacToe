@@ -37,6 +37,10 @@ const subscribeToGame = async (socket, userInfo) => {
   socket.on("move", data => {
     moveData(data);
   });
+  socket.on("cancelSearch", async () => {
+    await dataQueue.deleteQueueUserBySocketId(socket.id);
+    await subscribeToQueueUsers();
+  });
 };
 
 const moveData = async moveData => {
