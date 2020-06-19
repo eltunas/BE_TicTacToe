@@ -39,15 +39,6 @@ router.post("/", getDuplicateUser, async (req, res) => {
   }
 });
 
-router.delete("/:id", getOnlineUser, async (req, res) => {
-  try {
-    await onlineUsers.deleteOnlineUser(res.user.googleId);
-    res.status(200).json({ message: `Deleted user ${res.user.googleId}` });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
 async function getOnlineUser(req, res, next) {
   let user;
   try {

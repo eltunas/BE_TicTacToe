@@ -36,31 +36,15 @@ async function deleteRoomsByPlayerId(playerId) {
   await clientmongo
     .db("db_tic_tac_toe")
     .collection("Rooms")
-    .deleteMany({ 
+    .deleteMany({
       $or: [
         { player1Id: playerId.toString() },
         { player2Id: playerId.toString() },
-      ] 
+      ],
     });
 }
 
-async function updateRoom(room) {
-  const clientmongo = await connection.getConnection();
-  const query = { id: room.id.toString() };
-  const newValues = {
-    $set: {
-      nextToMove: room.nextToMove.toString(),
-      boardState: room.boardState,
-      moves: room.moves + 1,
-    },
-  };
-  await clientmongo
-    .db("db_tic_tac_toe")
-    .collection("Rooms")
-    .updateOne(query, newValues);
-}
-
-async function updateRoomWithSteroids(room, { socketId, square }) {
+async function updateRoom(room, { socketId, square }) {
   const clientmongo = await connection.getConnection();
   const query = { id: room.id };
   room.boardState[square] = room.nextToMove;
@@ -84,6 +68,5 @@ module.exports = {
   insertRoom,
   deleteRoom,
   updateRoom,
-  updateRoomWithSteroids,
-  deleteRoomsByPlayerId
+  deleteRoomsByPlayerId,
 };

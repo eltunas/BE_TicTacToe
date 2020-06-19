@@ -10,15 +10,6 @@ async function getQueueUsers() {
   return collection;
 }
 
-async function getQueueUser(googleId) {
-  const clientmongo = await connection.getConnection();
-  const user = await clientmongo
-    .db("db_tic_tac_toe")
-    .collection("Queue")
-    .findOne({ googleId: googleId.toString() });
-  return user;
-}
-
 async function getSingleQueueUser() {
   const clientmongo = await connection.getConnection();
   const user = await clientmongo
@@ -34,7 +25,7 @@ async function popQueueUser() {
     .db("db_tic_tac_toe")
     .collection("Queue")
     .findAndModify({
-      remove: true  
+      remove: true,
     })
     .limit(1);
   return user;
@@ -49,18 +40,17 @@ async function insertQueueUser(QueueUser) {
   return ops[0];
 }
 
-async function deleteQueueUser(googleId) {
+async function deleteQueueUserBySocketId(socketId) {
   const clientmongo = await connection.getConnection();
   await clientmongo
     .db("db_tic_tac_toe")
     .collection("Queue")
-    .deleteOne({ googleId: googleId.toString() });
+    .deleteOne({ socketId: socketId });
 }
 
 module.exports = {
   getQueueUsers,
-  getQueueUser,
   insertQueueUser,
-  deleteQueueUser,
-  getSingleQueueUser
+  deleteQueueUserBySocketId,
+  getSingleQueueUser,
 };

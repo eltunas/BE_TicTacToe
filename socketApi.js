@@ -42,7 +42,7 @@ const subscribeToGame = async (socket, userInfo) => {
 const moveData = async moveData => {
   console.log("moveData: ", moveData);
   let room = await dataRooms.getRoomByPlayerId(moveData.socketId);
-  room = await dataRooms.updateRoomWithSteroids(room, moveData);
+  room = await dataRooms.updateRoom(room, moveData);
   console.log("updatedRoom: ", room);
   let winner = room.moves > 4 ? gameLogic.gameWon(room.boardState) : null;
   socketApi.io.in(room.id).emit("boardUpdate", room);
@@ -98,7 +98,7 @@ async function findMatch(socket, userInfo) {
       peerSocket.emit("matchFound", player1);
       socket.emit("matchFound", player2);
 
-      await dataQueue.deleteQueueUser(peer.googleId);
+      await dataQueue.deleteQueueUserBySocketId(peer.socketId);
     }
   } else {
     await dataQueue.insertQueueUser({
@@ -111,6 +111,8 @@ async function findMatch(socket, userInfo) {
 
 async function handleDisconnection(socket) {
   let room = await dataRooms.getRoomByPlayerId(socket.id);
+  await dataOnlineUsers.deleteOnlineUsersBySocketId(socket.id);
+  await dataQueueUsers.deleteQueueUserBySocketId(socket.id);
 
   if (room != null) {
     endMatch(room, socket.id);
