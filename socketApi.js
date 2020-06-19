@@ -109,7 +109,7 @@ async function findMatch(socket, userInfo) {
 async function handleDisconnection(socket){
   let room = await dataRooms.getRoomByPlayerId(socket.id);
 
-  if(room != null){+
+  if(room != null){
     endMatch(room, socket.id);
   }
 }
