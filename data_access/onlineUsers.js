@@ -37,7 +37,7 @@ async function insertOnlineUser(onlineUser) {
   return ops[0];
 }
 
-async function deleteOnlineUseBySocketId(socketId) {
+async function deleteOnlineUserBySocketId(socketId) {
   const clientmongo = await connection.getConnection();
   await clientmongo
     .db("db_tic_tac_toe")
@@ -49,6 +49,6 @@ module.exports = {
   getOnlineUsers,
   getOnlineUser,
   insertOnlineUser,
-  deleteOnlineUseBySocketId,
+  deleteOnlineUserBySocketId,
   getOnlineUserBySocketId,
 };
