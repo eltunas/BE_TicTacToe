@@ -9,17 +9,17 @@ let socketApi = {};
 socketApi.io = io;
 module.exports = socketApi;
 
-let queue = [];
-
 socketApi.io.on("connection", socket => {
   subscribeToTicTaeToe(socket);
 });
 
 const subscribeToTicTaeToe = socket => {
   socket.on("findMatch", userInfo => subscribeToGame(socket, userInfo));
+  socket.on('disconnect', () => handleDisconnection(socket));
   socket.on("newUserOnline", () => subscribeToOnlineUsers());
   socket.on("newQueueUser", () => subscribeToQueueUsers());
 };
+
 
 const subscribeToOnlineUsers = () => {
   socketApi.io.emit("updateOnlineUsers");
@@ -82,7 +82,9 @@ async function findMatch(socket, userInfo) {
       let room = new RoomModel.Room(
         socket.id + "#" + peer.socketId,
         peerSocket,
-        socket
+        socket,
+        player1,
+        player2
       );
 
       dataRooms.insertRoom(room);
@@ -102,4 +104,25 @@ async function findMatch(socket, userInfo) {
       socketId: socket.id,
     });
   }
+}
+
+async function handleDisconnection(socket){
+  let room = await dataRooms.getRoomByPlayerId(socket.id);
+
+  if(room != null){
+    endMatch(room, socket.id);
+  }
+}
+
+async function endMatch(room, disconnectedPlayer){
+  let winner = null;
+
+  if(room.player1Id == disconnectedPlayer){
+    winner = room.player2Token;
+  }else{
+    winner = room.player1Token;
+  }
+
+  socketApi.io.in(room.id).emit("matchEnded", winner);
+  await dataRooms.deleteRoom(room.id);
 }

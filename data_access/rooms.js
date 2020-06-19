@@ -31,6 +31,19 @@ async function deleteRoom(roomId) {
     .deleteOne({ id: roomId.toString() });
 }
 
+async function deleteRoomsByPlayerId(playerId) {
+  const clientmongo = await connection.getConnection();
+  await clientmongo
+    .db("db_tic_tac_toe")
+    .collection("Rooms")
+    .deleteMany({ 
+      $or: [
+        { player1Id: playerId.toString() },
+        { player2Id: playerId.toString() },
+      ] 
+    });
+}
+
 async function updateRoom(room) {
   const clientmongo = await connection.getConnection();
   const query = { id: room.id.toString() };
@@ -72,4 +85,5 @@ module.exports = {
   deleteRoom,
   updateRoom,
   updateRoomWithSteroids,
+  deleteRoomsByPlayerId
 };
