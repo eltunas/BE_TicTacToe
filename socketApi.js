@@ -113,6 +113,8 @@ async function handleDisconnection(socket) {
   let room = await dataRooms.getRoomByPlayerId(socket.id);
   await dataOnlineUsers.deleteOnlineUsersBySocketId(socket.id);
   await dataQueueUsers.deleteQueueUserBySocketId(socket.id);
+  await subscribeToOnlineUsers();
+  await subscribeToQueueUsers();
 
   if (room != null) {
     endMatch(room, socket.id);
