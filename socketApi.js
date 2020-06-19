@@ -9,18 +9,17 @@ let socketApi = {};
 socketApi.io = io;
 module.exports = socketApi;
 
-let queue = [];
-
 socketApi.io.on("connection", socket => {
+  subscribeToTicTaeToe(socket);
+});
 
+const subscribeToTicTaeToe = socket => {
   socket.on("findMatch", userInfo => subscribeToGame(socket, userInfo));
-
   socket.on('disconnect', () => handleDisconnection(socket));
-
   socket.on("newUserOnline", () => subscribeToOnlineUsers());
   socket.on("newQueueUser", () => subscribeToQueueUsers());
+};
 
-});
 
 const subscribeToOnlineUsers = () => {
   socketApi.io.emit("updateOnlineUsers");
@@ -52,7 +51,7 @@ const moveData = async moveData => {
         const socket = socketApi.io.sockets.sockets[socket_id];
         socket.leave(room.id);
         socket.removeAllListeners();
-        socket.on("findMatch", userInfo => subscribeToGame(socket, userInfo));
+        subscribeToTicTaeToe(socket);
       });
     });
 
