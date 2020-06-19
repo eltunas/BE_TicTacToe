@@ -13,6 +13,9 @@ let queue = [];
 
 socketApi.io.on("connection", socket => {
   socket.on("findMatch", userInfo => subscribeToGame(socket, userInfo));
+  socket.on("newUserOnline", () => {
+    socketApi.io.emit("updateUsersOnline");
+  });
 });
 
 const subscribeToGame = async (socket, userInfo) => {
