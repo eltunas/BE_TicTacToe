@@ -3,7 +3,7 @@ const connection = require("./mongo_connection");
 async function getRoomByPlayerId(playerId) {
   const clientmongo = await connection.getConnection();
   const room = await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("Rooms")
     .findOne({
       $or: [
@@ -17,7 +17,7 @@ async function getRoomByPlayerId(playerId) {
 async function insertRoom(room) {
   const clientmongo = await connection.getConnection();
   const { ops } = await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("Rooms")
     .insertOne(room);
   return ops[0];
@@ -26,7 +26,7 @@ async function insertRoom(room) {
 async function deleteRoom(roomId) {
   const clientmongo = await connection.getConnection();
   await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("Rooms")
     .deleteOne({ id: roomId.toString() });
 }
@@ -34,7 +34,7 @@ async function deleteRoom(roomId) {
 async function deleteRoomsByPlayerId(playerId) {
   const clientmongo = await connection.getConnection();
   await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("Rooms")
     .deleteMany({
       $or: [
@@ -57,7 +57,7 @@ async function updateRoom(room, { socketId, square }) {
   };
   const options = { returnOriginal: false };
   const { value } = await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("Rooms")
     .findOneAndUpdate(query, newValues, options);
   return value;

@@ -3,7 +3,7 @@ const connection = require("./mongo_connection");
 async function getOnlineUsers() {
   const clientmongo = await connection.getConnection();
   const collection = await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("OnlineUsers")
     .find()
     .toArray();
@@ -13,7 +13,7 @@ async function getOnlineUsers() {
 async function getOnlineUser(googleId) {
   const clientmongo = await connection.getConnection();
   const user = await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("OnlineUsers")
     .findOne({ googleId: googleId.toString() });
   return user;
@@ -22,7 +22,7 @@ async function getOnlineUser(googleId) {
 async function getOnlineUserBySocketId(socketId) {
   const clientmongo = await connection.getConnection();
   const user = await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("OnlineUsers")
     .findOne({ socketId: socketId.toString() });
   return user;
@@ -31,7 +31,7 @@ async function getOnlineUserBySocketId(socketId) {
 async function insertOnlineUser(onlineUser) {
   const clientmongo = await connection.getConnection();
   const { ops } = await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("OnlineUsers")
     .insertOne(onlineUser);
   return ops[0];
@@ -40,7 +40,7 @@ async function insertOnlineUser(onlineUser) {
 async function deleteOnlineUserBySocketId(socketId) {
   const clientmongo = await connection.getConnection();
   await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("OnlineUsers")
     .deleteOne({ socketId: socketId });
 }

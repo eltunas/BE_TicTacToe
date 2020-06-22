@@ -3,7 +3,7 @@ const connection = require("./mongo_connection");
 async function getUser(googleId) {
   const clientmongo = await connection.getConnection();
   const user = await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("Users")
     .findOne({ googleId: googleId.toString() });
   return user;
@@ -12,7 +12,7 @@ async function getUser(googleId) {
 async function insertUser(user) {
   const clientmongo = await connection.getConnection();
   const { ops } = await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("Users")
     .insertOne(user);
   return ops[0];
@@ -37,7 +37,7 @@ async function updateUser(user, newValues) {
   const clientmongo = await connection.getConnection();
   const query = { googleId: user.googleId.toString() };
   await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("Users")
     .updateOne(query, newValues);
 }
@@ -46,7 +46,7 @@ async function getRanking() {
   const clientmongo = await connection.getConnection();
   const sortOptions = { wins: -1, ties: -1, losses: 1 };
   const collection = await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("Users")
     .find()
     .sort(sortOptions)
@@ -58,7 +58,7 @@ async function getRankOne() {
   const clientmongo = await connection.getConnection();
   const sortOptions = { wins: -1, ties: -1, losses: 1 };
   const user = await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("Users")
     .find()
     .sort(sortOptions)
