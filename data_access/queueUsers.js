@@ -3,7 +3,7 @@ const connection = require("./mongo_connection");
 async function getQueueUsers() {
   const clientmongo = await connection.getConnection();
   const collection = await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("Queue")
     .find()
     .toArray();
@@ -13,7 +13,7 @@ async function getQueueUsers() {
 async function getSingleQueueUser() {
   const clientmongo = await connection.getConnection();
   const user = await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("Queue")
     .findOne();
   return user;
@@ -22,7 +22,7 @@ async function getSingleQueueUser() {
 async function popQueueUser() {
   const clientmongo = await connection.getConnection();
   const user = await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("Queue")
     .findAndModify({
       remove: true,
@@ -34,7 +34,7 @@ async function popQueueUser() {
 async function insertQueueUser(QueueUser) {
   const clientmongo = await connection.getConnection();
   const { ops } = await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("Queue")
     .insertOne(QueueUser);
   return ops[0];
@@ -43,7 +43,7 @@ async function insertQueueUser(QueueUser) {
 async function deleteQueueUserBySocketId(socketId) {
   const clientmongo = await connection.getConnection();
   await clientmongo
-    .db("db_tic_tac_toe")
+    .db(process.env.DATABASE)
     .collection("Queue")
     .deleteOne({ socketId: socketId });
 }
