@@ -14,6 +14,7 @@ async function getConnection() {
   if (instance == null) {
     try {
       instance = await client.connect();
+      console.log("se abrio la conexion con mongo");
     } catch (err) {
       console.log(err.message);
     }
@@ -21,4 +22,16 @@ async function getConnection() {
   return instance;
 }
 
-module.exports = { getConnection };
+async function closeConnection() {
+  if (instance) {
+    try {
+      await client.close();
+      instance = null;
+      console.log("se cerro la conexion con mongo");
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+}
+
+module.exports = { getConnection, closeConnection };

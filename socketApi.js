@@ -6,6 +6,7 @@ const dataOnlineUsers = require("./data_access/onlineUsers");
 const dataQueueUsers = require("./data_access/queueUsers");
 const RoomModel = require("./data_access/Models/RoomModel");
 const dataQueue = require("./data_access/queueUsers");
+const connection = require("./data_access/mongo_connection");
 
 let socketApi = {};
 socketApi.io = io;
@@ -115,14 +116,12 @@ async function findMatch(socket, userInfo) {
 
 async function handleDisconnection(socket) {
   let room = await dataRooms.getRoomByPlayerId(socket.id);
+  room ? endMatch(room, socket.id) : null;
   await dataOnlineUsers.deleteOnlineUserBySocketId(socket.id);
   await dataQueueUsers.deleteQueueUserBySocketId(socket.id);
   await subscribeToOnlineUsers();
   await subscribeToQueueUsers();
-
-  if (room != null) {
-    endMatch(room, socket.id);
-  }
+  await connection.closeConnection();
 }
 
 async function endMatch(room, disconnectedPlayer) {
