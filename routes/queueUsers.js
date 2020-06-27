@@ -15,7 +15,7 @@ router.get("/", auth.verifyToken, async (req, res) => {
   }
 });
 
-router.post("/", auth.verifyToken, getDuplicateUser, async (req, res) => {
+router.post("/", [auth.verifyToken, getDuplicateUser], async (req, res) => {
   let user;
   if (
     req.body.googleId == null ||
