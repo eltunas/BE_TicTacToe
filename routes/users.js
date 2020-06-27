@@ -17,13 +17,7 @@ router.post("/", getDuplicateUser, async (req, res) => {
       req.body.googleId,
       req.body.name,
       req.body.createdDate
-    );
-    if(req.body.token == null || req.body.token == ""){
-      return res.status(401).send({ message: "Unauthorized!" });
-    }else{
-      user.token = req.body.token;
-    }
-    
+    );   
   }
   try {
     const newUser = await dataUsers.insertUser(user);
