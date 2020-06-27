@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const onlineUsers = require("../data_access/onlineUsers");
 const onlineUserModel = require("../data_access/Models/onlineUserModel");
+const auth = require("../Middlewares/auth");
+
+router.use(async(req, res, next) => await auth.verifyToken(req, res, next));
 
 router.get("/", async (req, res) => {
   try {

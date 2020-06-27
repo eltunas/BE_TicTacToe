@@ -9,6 +9,21 @@ async function getUser(googleId) {
   return user;
 }
 
+async function getUserByToken(token) {
+  const clientmongo = await connection.getConnection();
+  const user = await clientmongo
+    .db(process.env.DATABASE)
+    .collection("Users")
+    .findOne({ token: token.toString() });
+  return user;
+}
+
+async function refreshToken(googleId, token) {
+  const newValues = { $set: { token: token.toString() } };
+  user = { googleId: googleId };
+  await updateUser(user, newValues);
+}
+
 async function insertUser(user) {
   const clientmongo = await connection.getConnection();
   const { ops } = await clientmongo
@@ -75,4 +90,6 @@ module.exports = {
   updateLosses,
   getRanking,
   getRankOne,
+  getUserByToken,
+  refreshToken
 };

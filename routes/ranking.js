@@ -1,8 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const dataUsers = require("../data_access/users");
+const auth = require("../Middlewares/auth");
 
-router.get("/getRankOne", async (req, res) => {
+router.use(async(req, res, next) => await auth.verifyToken(req, res, next));
+
+router.get("/getRankOne", async (req, res, next) => {
   try {
     const user = await dataUsers.getRankOne();
     res.json(user);
@@ -11,7 +14,8 @@ router.get("/getRankOne", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
+  console.log("fetching ranking");
   try {
     const users = await dataUsers.getRanking();
     res.json(users);

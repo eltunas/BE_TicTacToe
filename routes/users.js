@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const dataUsers = require("../data_access/users");
 const userModel = require("../data_access/Models/userModel");
+const auth = require("../Middlewares/auth");
 
 router.post("/", getDuplicateUser, async (req, res) => {
   let user;
@@ -17,6 +18,12 @@ router.post("/", getDuplicateUser, async (req, res) => {
       req.body.name,
       req.body.createdDate
     );
+    if(req.body.token == null || req.body.token == ""){
+      return res.status(401).send({ message: "Unauthorized!" });
+    }else{
+      user.token = req.body.token;
+    }
+    
   }
   try {
     const newUser = await dataUsers.insertUser(user);
@@ -26,7 +33,22 @@ router.post("/", getDuplicateUser, async (req, res) => {
   }
 });
 
-router.put("/updateWins/:id", getUser, async (req, res) => {
+router.put("/register-token/:id", async (req, res, next) => {
+  try{
+    let { token } = req.body;
+    console.log(token);
+    if(token == null || token == ""){
+      return res.status(401).send({ message: "Unauthorized!" });
+    }else{
+      await dataUsers.refreshToken(req.params.id, token);
+      res.status(200).send("token refreshed");
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.put("/updateWins/:id", [auth.verifyToken, getUser], async (req, res) => {
   try {
     await dataUsers.updateWins(res.user);
     res.json(res.user);
@@ -35,7 +57,7 @@ router.put("/updateWins/:id", getUser, async (req, res) => {
   }
 });
 
-router.put("/updateTies/:id", getUser, async (req, res) => {
+router.put("/updateTies/:id", [auth.verifyToken, getUser], async (req, res) => {
   try {
     await dataUsers.updateTies(res.user);
     res.json(res.user);
@@ -44,7 +66,7 @@ router.put("/updateTies/:id", getUser, async (req, res) => {
   }
 });
 
-router.put("/updateLosses/:id", getUser, async (req, res) => {
+router.put("/updateLosses/:id", [auth.verifyToken, getUser], async (req, res) => {
   try {
     await dataUsers.updateLosses(res.user);
     res.json(res.user);
