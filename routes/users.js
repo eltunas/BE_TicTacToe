@@ -17,7 +17,7 @@ router.post("/", getDuplicateUser, async (req, res) => {
       req.body.googleId,
       req.body.name,
       req.body.createdDate
-    );   
+    );
   }
   try {
     const newUser = await dataUsers.insertUser(user);
@@ -28,14 +28,14 @@ router.post("/", getDuplicateUser, async (req, res) => {
 });
 
 router.put("/register-token/:id", async (req, res, next) => {
-  try{
+  try {
     let { token } = req.body;
     console.log(token);
-    if(token == null || token == ""){
-      return res.status(401).send({ message: "Unauthorized!" });
-    }else{
+    if (token == null || token == "") {
+      return res.status(401).json({ message: "Unauthorized!" });
+    } else {
       await dataUsers.refreshToken(req.params.id, token);
-      res.status(200).send("token refreshed");
+      res.status(200).json({ message: "token refreshed" });
     }
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -60,14 +60,18 @@ router.put("/updateTies/:id", [auth.verifyToken, getUser], async (req, res) => {
   }
 });
 
-router.put("/updateLosses/:id", [auth.verifyToken, getUser], async (req, res) => {
-  try {
-    await dataUsers.updateLosses(res.user);
-    res.json(res.user);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+router.put(
+  "/updateLosses/:id",
+  [auth.verifyToken, getUser],
+  async (req, res) => {
+    try {
+      await dataUsers.updateLosses(res.user);
+      res.json(res.user);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
   }
-});
+);
 
 async function getUser(req, res, next) {
   let user;
