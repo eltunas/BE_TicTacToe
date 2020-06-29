@@ -34,7 +34,7 @@ router.put("/register-token/:id", getUser, async (req, res) => {
     if (token == null || token == "") {
       return res.status(401).json({ message: "Unauthorized!" });
     } else {
-      await dataUsers.refreshToken(req.params.id, token);
+      await dataUsers.refreshToken(res.user, token);
       res.status(200).json(res.user);
     }
   } catch (err) {

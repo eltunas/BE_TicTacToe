@@ -18,9 +18,8 @@ async function getUserByToken(token) {
   return user;
 }
 
-async function refreshToken(googleId, token) {
+async function refreshToken(user, token) {
   const newValues = { $set: { token: token.toString() } };
-  user = { googleId: googleId };
   await updateUser(user, newValues);
 }
 
@@ -91,5 +90,5 @@ module.exports = {
   getRanking,
   getRankOne,
   getUserByToken,
-  refreshToken
+  refreshToken,
 };
