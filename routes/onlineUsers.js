@@ -2,8 +2,11 @@ const express = require("express");
 const router = express.Router();
 const onlineUsers = require("../data_access/onlineUsers");
 const onlineUserModel = require("../data_access/Models/onlineUserModel");
+const auth = require("../Middlewares/auth");
 
-router.get("/", async (req, res) => {
+//router.use(async(req, res, next) => await auth.verifyToken(req, res, next));
+
+router.get("/", auth.verifyToken, async (req, res) => {
   try {
     const users = await onlineUsers.getOnlineUsers();
     res.json(users);
@@ -12,7 +15,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", getDuplicateUser, async (req, res) => {
+router.post("/", [auth.verifyToken, getDuplicateUser], async (req, res) => {
   let user;
   if (
     req.body.googleId == null ||
