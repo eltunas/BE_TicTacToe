@@ -27,7 +27,7 @@ router.post("/", getDuplicateUser, async (req, res) => {
   }
 });
 
-router.put("/register-token/:id", async (req, res, next) => {
+router.put("/register-token/:id", getUser, async (req, res) => {
   try {
     let { token } = req.body;
     console.log(token);
@@ -35,7 +35,7 @@ router.put("/register-token/:id", async (req, res, next) => {
       return res.status(401).json({ message: "Unauthorized!" });
     } else {
       await dataUsers.refreshToken(req.params.id, token);
-      res.status(200).json({ message: "token refreshed" });
+      res.status(200).json(res.user);
     }
   } catch (err) {
     res.status(500).json({ message: err.message });
