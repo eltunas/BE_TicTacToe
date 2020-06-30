@@ -4,8 +4,6 @@ const queueUsers = require("../data_access/queueUsers");
 const queueUserModel = require("../data_access/Models/queueUserModel");
 const auth = require("../Middlewares/auth");
 
-//router.use(async(req, res, next) => await auth.verifyToken(req, res, next));
-
 router.get("/", auth.verifyToken, async (req, res) => {
   try {
     const users = await queueUsers.getQueueUsers();

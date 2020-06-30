@@ -4,8 +4,6 @@ const onlineUsers = require("../data_access/onlineUsers");
 const onlineUserModel = require("../data_access/Models/onlineUserModel");
 const auth = require("../Middlewares/auth");
 
-//router.use(async(req, res, next) => await auth.verifyToken(req, res, next));
-
 router.get("/", auth.verifyToken, async (req, res) => {
   try {
     const users = await onlineUsers.getOnlineUsers();

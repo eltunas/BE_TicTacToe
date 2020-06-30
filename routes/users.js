@@ -27,7 +27,7 @@ router.post("/", getDuplicateUser, async (req, res) => {
   }
 });
 
-router.put("/register-token/:id", async (req, res) => {
+router.put("/:id/refreshToken", async (req, res) => {
   try {
     let { token } = req.body;
     console.log(token);
@@ -42,7 +42,7 @@ router.put("/register-token/:id", async (req, res) => {
   }
 });
 
-router.put("/updateWins/:id", [auth.verifyToken, getUser], async (req, res) => {
+router.put("/:id/updateWins", [auth.verifyToken, getUser], async (req, res) => {
   try {
     await dataUsers.updateWins(res.user);
     res.json(res.user);
@@ -51,7 +51,7 @@ router.put("/updateWins/:id", [auth.verifyToken, getUser], async (req, res) => {
   }
 });
 
-router.put("/updateTies/:id", [auth.verifyToken, getUser], async (req, res) => {
+router.put("/:id/updateTies", [auth.verifyToken, getUser], async (req, res) => {
   try {
     await dataUsers.updateTies(res.user);
     res.json(res.user);
@@ -61,7 +61,7 @@ router.put("/updateTies/:id", [auth.verifyToken, getUser], async (req, res) => {
 });
 
 router.put(
-  "/updateLosses/:id",
+  "/:id/updateLosses",
   [auth.verifyToken, getUser],
   async (req, res) => {
     try {
