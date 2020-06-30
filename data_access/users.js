@@ -18,9 +18,16 @@ async function getUserByToken(token) {
   return user;
 }
 
-async function refreshToken(user, token) {
+async function refreshToken(googleId, token) {
+  const clientmongo = await connection.getConnection();
+  const query = { googleId: googleId.toString() };
   const newValues = { $set: { token: token.toString() } };
-  await updateUser(user, newValues);
+  const options = { returnOriginal: false };
+  const { value } = await clientmongo
+    .db(process.env.DATABASE)
+    .collection("Users")
+    .findOneAndUpdate(query, newValues, options);
+  return value;
 }
 
 async function insertUser(user) {
