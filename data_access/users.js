@@ -61,11 +61,11 @@ async function updateUser(googleId, newValues) {
   const clientmongo = await connection.getConnection();
   const query = { googleId: googleId.toString() };
   const options = { returnOriginal: false };
-  const user = await clientmongo
+  const { value } = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
     .findOneAndUpdate(query, newValues, options);
-  return user;
+  return value;
 }
 
 async function getRanking() {
