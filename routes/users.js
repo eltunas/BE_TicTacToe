@@ -43,8 +43,8 @@ router.put("/:id/refreshToken", async (req, res) => {
 
 router.put("/:id/updateWins", [auth.verifyToken, getUser], async (req, res) => {
   try {
-    await dataUsers.updateWins(req.params.id);
-    res.json(res.user);
+    const updatedUser = await dataUsers.updateWins(req.params.id);
+    res.json(updatedUser);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -52,8 +52,8 @@ router.put("/:id/updateWins", [auth.verifyToken, getUser], async (req, res) => {
 
 router.put("/:id/updateTies", [auth.verifyToken, getUser], async (req, res) => {
   try {
-    await dataUsers.updateTies(req.params.id);
-    res.json(res.user);
+    const updatedUser = await dataUsers.updateTies(req.params.id);
+    res.json(updatedUser);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -64,8 +64,8 @@ router.put(
   [auth.verifyToken, getUser],
   async (req, res) => {
     try {
-      await dataUsers.updateLosses(req.params.id);
-      res.json(res.user);
+      const updatedUser = await dataUsers.updateLosses(req.params.id);
+      res.json(updatedUser);
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
