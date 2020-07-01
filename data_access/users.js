@@ -60,31 +60,26 @@ async function insertUser(user) {
 
 async function updateWins(googleId) {
   const newValues = { $inc: { wins: 1 } };
-  const updatedUser = await updateUser(googleId, newValues);
-  return updatedUser;
+  await updateUser(googleId, newValues);
 }
 
 async function updateTies(googleId) {
   const newValues = { $inc: { ties: 1 } };
-  const updatedUser = await updateUser(googleId, newValues);
-  return updatedUser;
+  await updateUser(googleId, newValues);
 }
 
 async function updateLosses(googleId) {
-  const newValues = { $inc: { losess: 1 } };
-  const updatedUser = await updateUser(googleId, newValues);
-  return updatedUser;
+  const newValues = { $inc: { losses: 1 } };
+  await updateUser(googleId, newValues);
 }
 
 async function updateUser(googleId, newValues) {
   const clientmongo = await connection.getConnection();
   const query = { googleId: googleId.toString() };
-  const options = { returnOriginal: false };
-  const { value } = await clientmongo
+  await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
-    .findOneAndUpdate(query, newValues, options);
-  return value;
+    .findOneAndUpdate(query, newValues);
 }
 
 async function getRanking() {

@@ -41,32 +41,36 @@ router.put("/:id/refreshToken", async (req, res) => {
   }
 });
 
-router.put("/:id/updateWins", auth.verifyToken, async (req, res) => {
+router.put("/:id/updateWins", [auth.verifyToken, getUser], async (req, res) => {
   try {
-    const user = await dataUsers.updateWins(res.params.id);
-    res.json(user);
+    await dataUsers.updateWins(req.params.id);
+    res.json(res.user);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-router.put("/:id/updateTies", auth.verifyToken, async (req, res) => {
+router.put("/:id/updateTies", [auth.verifyToken, getUser], async (req, res) => {
   try {
-    const user = await dataUsers.updateWins(res.params.id);
-    res.json(user);
+    await dataUsers.updateTies(req.params.id);
+    res.json(res.user);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-router.put("/:id/updateLosses", auth.verifyToken, async (req, res) => {
-  try {
-    const user = await dataUsers.updateWins(res.params.id);
-    res.json(user);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+router.put(
+  "/:id/updateLosses",
+  [auth.verifyToken, getUser],
+  async (req, res) => {
+    try {
+      await dataUsers.updateLosses(req.params.id);
+      res.json(res.user);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
   }
-});
+);
 
 async function getUser(req, res, next) {
   let user;
