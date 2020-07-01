@@ -39,24 +39,24 @@ async function insertUser(user) {
   return ops[0];
 }
 
-async function updateWins(user) {
-  const newValues = { $set: { wins: (user.wins += 1) } };
-  await updateUser(user, newValues);
+async function updateWins(googleId) {
+  const newValues = { $inc: { wins: 1 } };
+  await updateUser(googleId, newValues);
 }
 
-async function updateTies(user) {
-  const newValues = { $set: { ties: (user.ties += 1) } };
-  await updateUser(user, newValues);
+async function updateTies(googleId) {
+  const newValues = { $inc: { ties: 1 } };
+  await updateUser(googleId, newValues);
 }
 
-async function updateLosses(user) {
-  const newValues = { $set: { losses: (user.losses += 1) } };
-  await updateUser(user, newValues);
+async function updateLosses(googleId) {
+  const newValues = { $inc: { losess: 1 } };
+  await updateUser(googleId, newValues);
 }
 
-async function updateUser(user, newValues) {
+async function updateUser(googleId, newValues) {
   const clientmongo = await connection.getConnection();
-  const query = { googleId: user.googleId.toString() };
+  const query = { googleId: googleId.toString() };
   await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
