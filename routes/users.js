@@ -30,7 +30,6 @@ router.post("/", getDuplicateUser, async (req, res) => {
 router.put("/:id/refreshToken", async (req, res) => {
   try {
     let { token } = req.body;
-    console.log(token);
     if (token == null || token == "") {
       return res.status(401).json({ message: "Unauthorized!" });
     } else {

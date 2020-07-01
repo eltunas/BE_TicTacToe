@@ -44,10 +44,8 @@ const subscribeToGame = async (socket, userInfo) => {
 };
 
 const moveData = async moveData => {
-  console.log("moveData: ", moveData);
   let room = await dataRooms.getRoomByPlayerId(moveData.socketId);
   room = await dataRooms.updateRoom(room, moveData);
-  console.log("updatedRoom: ", room);
   let winner = room.moves > 4 ? gameLogic.gameWon(room.boardState) : null;
   socketApi.io.in(room.id).emit("boardUpdate", room);
 
@@ -68,7 +66,6 @@ const moveData = async moveData => {
 
 async function findMatch(socket, userInfo) {
   let peer = await dataQueue.getSingleQueueUser();
-  console.log(peer);
   if (peer != null) {
     if (peer.socketId != socket.id) {
       let player1;
@@ -83,9 +80,6 @@ async function findMatch(socket, userInfo) {
         player2 = "X";
       }
       peerSocket = socketApi.io.sockets.sockets[peer.socketId];
-      console.log(random);
-      console.log("player 1: ", player1);
-      console.log("player 2: ", player2);
       let room = new RoomModel.Room(
         socket.id + "#" + peer.socketId,
         peerSocket,

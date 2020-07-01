@@ -13,7 +13,6 @@ router.get("/getRankOne", auth.verifyToken, async (req, res, next) => {
 });
 
 router.get("/", auth.verifyToken, async (req, res, next) => {
-  console.log("fetching ranking");
   try {
     const users = await dataUsers.getRanking();
     res.json(users);
