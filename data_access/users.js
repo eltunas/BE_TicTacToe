@@ -39,28 +39,52 @@ async function insertUser(user) {
   return ops[0];
 }
 
+// async function updateRoom(room, { socketId, square }) {
+//   const clientmongo = await connection.getConnection();
+//   const query = { id: room.id };
+//   room.boardState[square] = room.nextToMove;
+//   const newValues = {
+//     $set: {
+//       nextToMove: room.nextToMove === "X" ? "O" : "X",
+//       boardState: room.boardState,
+//       moves: room.moves + 1,
+//     },
+//   };
+//   const options = { returnOriginal: false };
+//   const { value } = await clientmongo
+//     .db(process.env.DATABASE)
+//     .collection("Rooms")
+//     .findOneAndUpdate(query, newValues, options);
+//   return value;
+// }
+
 async function updateWins(googleId) {
   const newValues = { $inc: { wins: 1 } };
-  await updateUser(googleId, newValues);
+  const updatedUser = await updateUser(googleId, newValues);
+  return updatedUser;
 }
 
 async function updateTies(googleId) {
   const newValues = { $inc: { ties: 1 } };
-  await updateUser(googleId, newValues);
+  const updatedUser = await updateUser(googleId, newValues);
+  return updatedUser;
 }
 
 async function updateLosses(googleId) {
   const newValues = { $inc: { losess: 1 } };
-  await updateUser(googleId, newValues);
+  const updatedUser = await updateUser(googleId, newValues);
+  return updatedUser;
 }
 
 async function updateUser(googleId, newValues) {
   const clientmongo = await connection.getConnection();
   const query = { googleId: googleId.toString() };
-  await clientmongo
+  const options = { returnOriginal: false };
+  const { value } = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
-    .updateOne(query, newValues);
+    .findOneAndUpdate(query, newValues, options);
+  return value;
 }
 
 async function getRanking() {
