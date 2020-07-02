@@ -27,7 +27,7 @@ router.post("/", getDuplicateUser, async (req, res) => {
   }
 });
 
-router.put("/:id/refreshToken", async (req, res) => {
+router.put("/:id/refreshToken", getUser, async (req, res) => {
   try {
     let { token } = req.body;
     if (token == null || token == "") {
