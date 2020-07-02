@@ -16,7 +16,7 @@ async function getUserByToken(token) {
   const user = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
-    .findOne(query, options);
+    .findOne(query);
   return user;
 }
 
