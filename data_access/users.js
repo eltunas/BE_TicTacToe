@@ -3,24 +3,20 @@ const connection = require("./mongo_connection");
 async function getUser(googleId) {
   const clientmongo = await connection.getConnection();
   const query = { googleId: googleId.toString() };
-  const projection = { token: 0 };
   const user = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
-    .findOne(query)
-    .project(projection);
+    .findOne(query);
   return user;
 }
 
 async function getUserByToken(token) {
   const clientmongo = await connection.getConnection();
   const query = { token: token.toString() };
-  const projection = { token: 0 };
   const user = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
-    .findOne(query, options)
-    .project(projection);
+    .findOne(query, options);
   return user;
 }
 
@@ -29,23 +25,19 @@ async function refreshToken(googleId, token) {
   const query = { googleId: googleId.toString() };
   const newValues = { $set: { token: token.toString() } };
   const options = { returnOriginal: false };
-  const projection = { token: 0 };
   const { value } = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
-    .findOneAndUpdate(query, newValues, options)
-    .project(projection);
+    .findOneAndUpdate(query, newValues, options);
   return value;
 }
 
 async function insertUser(user) {
   const clientmongo = await connection.getConnection();
-  const projection = { token: 0 };
   const { ops } = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
-    .insertOne(user)
-    .project(projection);
+    .insertOne(user);
   return ops[0];
 }
 
@@ -83,12 +75,10 @@ async function updateUser(googleId, newValues) {
 async function getRanking() {
   const clientmongo = await connection.getConnection();
   const sortOptions = { wins: -1, ties: -1, losses: 1 };
-  const projection = { token: 0 };
   const collection = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
     .find()
-    .project(projection)
     .sort(sortOptions)
     .toArray();
   return collection;
@@ -97,12 +87,10 @@ async function getRanking() {
 async function getRankOne() {
   const clientmongo = await connection.getConnection();
   const sortOptions = { wins: -1, ties: -1, losses: 1 };
-  const projection = { token: 0 };
   const user = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
     .find()
-    .project(projection)
     .sort(sortOptions)
     .limit(1)
     .toArray();
