@@ -63,12 +63,10 @@ async function updateUser(googleId, newValues) {
   const clientmongo = await connection.getConnection();
   const query = { googleId: googleId.toString() };
   const options = { returnOriginal: false };
-  const projection = { token: 0 };
   const { value } = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
-    .findOneAndUpdate(query, newValues, options)
-    .project(projection);
+    .findOneAndUpdate(query, newValues, options);
   return value;
 }
 
