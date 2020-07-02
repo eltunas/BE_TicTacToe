@@ -39,28 +39,33 @@ async function insertUser(user) {
   return ops[0];
 }
 
-async function updateWins(user) {
-  const newValues = { $set: { wins: (user.wins += 1) } };
-  await updateUser(user, newValues);
+async function updateWins(googleId) {
+  const newValues = { $inc: { wins: 1 } };
+  const user = await updateUser(googleId, newValues);
+  return user;
 }
 
-async function updateTies(user) {
-  const newValues = { $set: { ties: (user.ties += 1) } };
-  await updateUser(user, newValues);
+async function updateTies(googleId) {
+  const newValues = { $inc: { ties: 1 } };
+  const user = await updateUser(googleId, newValues);
+  return user;
 }
 
-async function updateLosses(user) {
-  const newValues = { $set: { losses: (user.losses += 1) } };
-  await updateUser(user, newValues);
+async function updateLosses(googleId) {
+  const newValues = { $inc: { losses: 1 } };
+  const user = await updateUser(googleId, newValues);
+  return user;
 }
 
-async function updateUser(user, newValues) {
+async function updateUser(googleId, newValues) {
   const clientmongo = await connection.getConnection();
-  const query = { googleId: user.googleId.toString() };
-  await clientmongo
+  const query = { googleId: googleId.toString() };
+  const options = { returnOriginal: false };
+  const { value } = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
-    .updateOne(query, newValues);
+    .findOneAndUpdate(query, newValues, options);
+  return value;
 }
 
 async function getRanking() {

@@ -16,7 +16,7 @@ socketApi.io.on("connection", socket => {
 });
 
 const subscribeToTicTaeToe = socket => {
-  socket.on("findMatch", userInfo => subscribeToGame(socket, userInfo));
+  socket.on("findMatch", () => subscribeToGame(socket));
   socket.on("disconnect", () => handleDisconnection(socket));
   socket.on("newUserOnline", () => subscribeToOnlineUsers());
   socket.on("newQueueUser", () => subscribeToQueueUsers());
@@ -32,8 +32,8 @@ const subscribeToQueueUsers = async () => {
   socketApi.io.emit("updateQueueUsers", queueUsers);
 };
 
-const subscribeToGame = async (socket, userInfo) => {
-  await findMatch(socket, userInfo);
+const subscribeToGame = async socket => {
+  await findMatch(socket);
   socket.on("move", data => {
     moveData(data);
   });
@@ -64,7 +64,7 @@ const moveData = async moveData => {
   }
 };
 
-async function findMatch(socket, userInfo) {
+async function findMatch(socket) {
   let peer = await dataQueue.getSingleQueueUser();
   if (peer != null) {
     if (peer.socketId != socket.id) {
@@ -99,11 +99,10 @@ async function findMatch(socket, userInfo) {
       await dataQueue.deleteQueueUserBySocketId(peer.socketId);
     }
   } else {
-    await dataQueue.insertQueueUser({
-      googleId: userInfo.googleId,
-      name: userInfo.name,
-      socketId: socket.id,
-    });
+    const newQueueUser = await dataOnlineUsers.getOnlineUserBySocketId(
+      socket.id
+    );
+    await dataQueueUsers.insertQueueUser(newQueueUser);
   }
 }
 
@@ -111,8 +110,9 @@ async function handleDisconnection(socket) {
   let room = await dataRooms.getRoomByPlayerId(socket.id);
   await dataOnlineUsers.deleteOnlineUserBySocketId(socket.id);
   await dataQueueUsers.deleteQueueUserBySocketId(socket.id);
-  await subscribeToOnlineUsers();
-  await subscribeToQueueUsers();
+  subscribeToOnlineUsers();
+  subscribeToQueueUsers();
+  socket.removeAllListeners();
 
   if (room != null) {
     endMatch(room, socket.id);
