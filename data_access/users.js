@@ -2,19 +2,23 @@ const connection = require("./mongo_connection");
 
 async function getUser(googleId) {
   const clientmongo = await connection.getConnection();
+  const query = { googleId: googleId.toString() };
+  const options = { token: 0 };
   const user = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
-    .findOne({ googleId: googleId.toString() });
+    .findOne(query, options);
   return user;
 }
 
 async function getUserByToken(token) {
   const clientmongo = await connection.getConnection();
+  const query = { token: token.toString() };
+  const options = { token: 0 };
   const user = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
-    .findOne({ token: token.toString() });
+    .findOne(query, options);
   return user;
 }
 
@@ -22,7 +26,7 @@ async function refreshToken(googleId, token) {
   const clientmongo = await connection.getConnection();
   const query = { googleId: googleId.toString() };
   const newValues = { $set: { token: token.toString() } };
-  const options = { returnOriginal: false };
+  const options = { returnOriginal: false, token: 0 };
   const { value } = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
@@ -60,7 +64,7 @@ async function updateLosses(googleId) {
 async function updateUser(googleId, newValues) {
   const clientmongo = await connection.getConnection();
   const query = { googleId: googleId.toString() };
-  const options = { returnOriginal: false };
+  const options = { returnOriginal: false, token: 0 };
   const { value } = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
@@ -74,7 +78,7 @@ async function getRanking() {
   const collection = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
-    .find()
+    .find({}, { token: 0 })
     .sort(sortOptions)
     .toArray();
   return collection;
@@ -86,7 +90,7 @@ async function getRankOne() {
   const user = await clientmongo
     .db(process.env.DATABASE)
     .collection("Users")
-    .find()
+    .find({}, { token: 0 })
     .sort(sortOptions)
     .limit(1)
     .toArray();
