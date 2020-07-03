@@ -21,11 +21,11 @@ async function getSingleQueueUser() {
 
 async function popQueueUser() {
   const clientmongo = await connection.getConnection();
-  const user = await clientmongo
+  const { value } = await clientmongo
     .db(process.env.DATABASE)
     .collection("Queue")
     .findOneAndDelete({});
-  return user;
+  return value;
 }
 
 async function insertQueueUser(QueueUser) {
