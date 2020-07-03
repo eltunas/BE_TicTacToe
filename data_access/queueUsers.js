@@ -10,15 +10,6 @@ async function getQueueUsers() {
   return collection;
 }
 
-async function getSingleQueueUser() {
-  const clientmongo = await connection.getConnection();
-  const user = await clientmongo
-    .db(process.env.DATABASE)
-    .collection("Queue")
-    .findOne();
-  return user;
-}
-
 async function popQueueUser() {
   const clientmongo = await connection.getConnection();
   const { value } = await clientmongo
