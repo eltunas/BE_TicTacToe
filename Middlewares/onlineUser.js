@@ -3,7 +3,7 @@ const onlineUsers = require("../data_access/onlineUsers");
 async function getOnlineUser(req, res, next) {
   let user;
   try {
-    user = await onlineUsers.getOnlineUser(req.params.id);
+    user = await onlineUsers.getOnlineUser(req.body.googleId);
     if (user == null) {
       return res.status(404).json({ message: "cannot find user" });
     }
