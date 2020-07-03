@@ -16,7 +16,7 @@ router.get("/", auth.verifyToken, async (req, res) => {
 
 router.post(
   "/",
-  [auth.verifyToken, onlineUserMiddleware.getOnlineUser],
+  [auth.verifyToken, onlineUserMiddleware.getDuplicateUser],
   async (req, res) => {
     let user;
     if (req.body.googleId == null || req.body.name == null) {

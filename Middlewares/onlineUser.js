@@ -3,7 +3,7 @@ const onlineUsers = require("../data_access/onlineUsers");
 async function getOnlineUser(req, res, next) {
   let user;
   try {
-    user = await onlineUsers.getOnlineUser(req.body.googleId);
+    user = await onlineUsers.getOnlineUser(req.params.id);
     if (user == null) {
       return res.status(404).json({ message: "cannot find user" });
     }
@@ -14,4 +14,14 @@ async function getOnlineUser(req, res, next) {
   next();
 }
 
-module.exports = { getOnlineUser };
+async function getDuplicateUser(req, res, next) {
+  let user;
+  try {
+    user = await onlineUsers.getOnlineUser(req.body.googleId);
+    return user != null ? res.status(200).json(user) : next();
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+}
+
+module.exports = { getOnlineUser, getDuplicateUser };

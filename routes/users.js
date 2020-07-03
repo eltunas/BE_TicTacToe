@@ -5,7 +5,7 @@ const userModel = require("../data_access/Models/userModel");
 const auth = require("../Middlewares/auth");
 const userMiddleware = require("../Middlewares/user");
 
-router.post("/", async (req, res) => {
+router.post("/", userMiddleware.getDuplicateUser, async (req, res) => {
   let user;
   if (
     req.body.googleId == null ||

@@ -14,4 +14,14 @@ async function getUser(req, res, next) {
   next();
 }
 
-module.exports = { getUser };
+async function getDuplicateUser(req, res, next) {
+  let user;
+  try {
+    user = await dataUsers.getUser(req.body.googleId);
+    return user != null ? res.status(200).json(user) : next();
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+}
+
+module.exports = { getUser, getDuplicateUser };
