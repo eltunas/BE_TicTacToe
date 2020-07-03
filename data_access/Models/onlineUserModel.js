@@ -1,5 +1,5 @@
 class OnlineUser {
-  constructor(googleId, name, socketId) {
+  constructor(googleId, name) {
     this.googleId = googleId;
     this.name = name;
   }
