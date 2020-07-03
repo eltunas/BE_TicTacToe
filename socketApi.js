@@ -12,6 +12,7 @@ socketApi.io = io;
 module.exports = socketApi;
 
 socketApi.io.on("connection", socket => {
+  console.log("un socket se ha conectado: ", socket.id);
   subscribeToTicTaeToe(socket);
 });
 
@@ -66,7 +67,6 @@ const moveData = async moveData => {
 
 async function findMatch(socket) {
   let peer = await dataQueue.popQueueUser();
-  console.log("peer: ", peer);
   if (peer != null) {
     if (peer.socketId != socket.id) {
       let player1;
