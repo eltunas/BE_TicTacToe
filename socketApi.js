@@ -16,11 +16,6 @@ socketApi.io.on("connection", socket => {
   subscribeToTicTaeToe(socket);
 });
 
-socketApi.io.on("reconnect", socket => {
-  console.log("un socket se ha RECONECTADO: ", socket.id);
-  subscribeToTicTaeToe(socket);
-});
-
 const subscribeToTicTaeToe = socket => {
   socket.on("findMatch", () => subscribeToGame(socket));
   socket.on("disconnect", () => handleDisconnection(socket));
@@ -122,6 +117,11 @@ async function handleDisconnection(socket) {
   if (room != null) {
     endMatch(room, socket.id);
   }
+
+  socketApi.io.on("reconnect", socket => {
+    console.log("un socket se ha RECONECTADO: ", socket.id);
+    subscribeToTicTaeToe(socket);
+  });
 }
 
 async function endMatch(room, disconnectedPlayer) {
