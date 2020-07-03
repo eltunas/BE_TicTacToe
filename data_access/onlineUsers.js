@@ -54,6 +54,7 @@ async function refreshSocketId(googleId, socketId) {
     .db(process.env.DATABASE)
     .collection("OnlineUsers")
     .findOneAndUpdate(query, newValues, options);
+  return value;
 }
 
 module.exports = {
