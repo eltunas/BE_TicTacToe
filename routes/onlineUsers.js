@@ -13,14 +13,14 @@ router.get("/", auth.verifyToken, async (req, res) => {
   }
 });
 
-router.post("/", [auth.verifyToken, getDuplicateUser], async (req, res) => {
+router.post("/", auth.verifyToken, async (req, res) => {
   let user;
   if (
     req.body.googleId == null ||
     req.body.name == null ||
     req.body.socketId == null
   ) {
-    return res.status(400).json({ message: "Parametros incorrectos" });
+    return res.status(400).json({ message: "cannot insert online user" });
   } else {
     user = new onlineUserModel.OnlineUser(
       req.body.googleId,
@@ -36,14 +36,16 @@ router.post("/", [auth.verifyToken, getDuplicateUser], async (req, res) => {
   }
 });
 
-async function getDuplicateUser(req, res, next) {
-  let user;
+router.put("/:id/refreshSocketId", auth.verifyToken, async (req, res) => {
   try {
-    user = await onlineUsers.getOnlineUser(req.body.googleId);
-    return user != null ? res.status(200).json(user) : next();
+    const updatedUser = await onlineUsers.refreshSocketId(
+      req.params.id,
+      req.body.socketId
+    );
+    res.status(200).json(updatedUser);
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
-}
+});
 
 module.exports = router;

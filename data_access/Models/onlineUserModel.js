@@ -2,7 +2,6 @@ class OnlineUser {
   constructor(googleId, name, socketId) {
     this.googleId = googleId;
     this.name = name;
-    this.socketId = socketId;
   }
 }
 

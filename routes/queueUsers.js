@@ -13,14 +13,14 @@ router.get("/", auth.verifyToken, async (req, res) => {
   }
 });
 
-router.post("/", [auth.verifyToken, getDuplicateUser], async (req, res) => {
+router.post("/", auth.verifyToken, async (req, res) => {
   let user;
   if (
     req.body.googleId == null ||
     req.body.name == null ||
     req.body.socketId == null
   ) {
-    return res.status(400).json({ message: "Parametros incorrectos" });
+    return res.status(400).json({ message: "cannot insert queue user" });
   } else {
     user = new queueUserModel.QueueUser(
       req.body.googleId,
@@ -35,15 +35,5 @@ router.post("/", [auth.verifyToken, getDuplicateUser], async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
-async function getDuplicateUser(req, res, next) {
-  let user;
-  try {
-    user = await queueUsers.getQueueUser(req.body.googleId);
-    return user != null ? res.status(200).json(user) : next();
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
-  }
-}
 
 module.exports = router;

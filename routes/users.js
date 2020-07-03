@@ -3,15 +3,16 @@ const router = express.Router();
 const dataUsers = require("../data_access/users");
 const userModel = require("../data_access/Models/userModel");
 const auth = require("../Middlewares/auth");
+const userMiddleware = require("../Middlewares/user");
 
-router.post("/", getDuplicateUser, async (req, res) => {
+router.post("/", async (req, res) => {
   let user;
   if (
     req.body.googleId == null ||
     req.body.name == null ||
     req.body.createdDate == null
   ) {
-    return res.status(400).json({ message: "Parametros incorrectos" });
+    return res.status(400).json({ message: "cannot insert user" });
   } else {
     user = new userModel.User(
       req.body.googleId,
@@ -27,7 +28,7 @@ router.post("/", getDuplicateUser, async (req, res) => {
   }
 });
 
-router.put("/:id/refreshToken", getUser, async (req, res) => {
+router.put("/:id/refreshToken", userMiddleware.getUser, async (req, res) => {
   try {
     let { token } = req.body;
     if (token == null || token == "") {
@@ -41,27 +42,35 @@ router.put("/:id/refreshToken", getUser, async (req, res) => {
   }
 });
 
-router.put("/:id/updateWins", [auth.verifyToken, getUser], async (req, res) => {
-  try {
-    const updatedUser = await dataUsers.updateWins(req.params.id);
-    res.json(updatedUser);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+router.put(
+  "/:id/updateWins",
+  [auth.verifyToken, userMiddleware.getUser],
+  async (req, res) => {
+    try {
+      const updatedUser = await dataUsers.updateWins(req.params.id);
+      res.json(updatedUser);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
   }
-});
+);
 
-router.put("/:id/updateTies", [auth.verifyToken, getUser], async (req, res) => {
-  try {
-    const updatedUser = await dataUsers.updateTies(req.params.id);
-    res.json(updatedUser);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+router.put(
+  "/:id/updateTies",
+  [auth.verifyToken, userMiddleware.getUser],
+  async (req, res) => {
+    try {
+      const updatedUser = await dataUsers.updateTies(req.params.id);
+      res.json(updatedUser);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
   }
-});
+);
 
 router.put(
   "/:id/updateLosses",
-  [auth.verifyToken, getUser],
+  [auth.verifyToken, userMiddleware.getUser],
   async (req, res) => {
     try {
       const updatedUser = await dataUsers.updateLosses(req.params.id);
@@ -71,29 +80,5 @@ router.put(
     }
   }
 );
-
-async function getUser(req, res, next) {
-  let user;
-  try {
-    user = await dataUsers.getUser(req.params.id);
-    if (user == null) {
-      return res.status(404).json({ message: "cannot find user" });
-    }
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
-  }
-  res.user = user;
-  next();
-}
-
-async function getDuplicateUser(req, res, next) {
-  let user;
-  try {
-    user = await dataUsers.getUser(req.body.googleId);
-    return user != null ? res.status(200).json(user) : next();
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
-  }
-}
 
 module.exports = router;

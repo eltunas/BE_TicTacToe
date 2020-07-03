@@ -45,10 +45,22 @@ async function deleteOnlineUserBySocketId(socketId) {
     .deleteOne({ socketId: socketId });
 }
 
+async function refreshSocketId(googleId, socketId) {
+  const clientmongo = await connection.getConnection();
+  const query = { googleId: googleId.toString() };
+  const newValues = { $set: { socketId: socketId.toString() } };
+  const options = { returnOriginal: false };
+  const { value } = await clientmongo
+    .db(process.env.DATABASE)
+    .collection("OnlineUsers")
+    .findOneAndUpdate(query, newValues, options);
+}
+
 module.exports = {
   getOnlineUsers,
   getOnlineUser,
   insertOnlineUser,
   deleteOnlineUserBySocketId,
   getOnlineUserBySocketId,
+  refreshSocketId,
 };
