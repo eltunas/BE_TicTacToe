@@ -40,6 +40,5 @@ module.exports = {
   getQueueUsers,
   insertQueueUser,
   deleteQueueUserBySocketId,
-  getSingleQueueUser,
   popQueueUser,
 };
