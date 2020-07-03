@@ -33,16 +33,20 @@ router.post(
   }
 );
 
-router.put("/:id/refreshSocketId", auth.verifyToken, async (req, res) => {
-  try {
-    const updatedUser = await onlineUsers.refreshSocketId(
-      req.params.id,
-      req.body.socketId
-    );
-    res.status(200).json(updatedUser);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+router.put(
+  "/:id/refreshSocketId",
+  [auth.verifyToken, onlineUserMiddleware.getOnlineUser],
+  async (req, res) => {
+    try {
+      const updatedUser = await onlineUsers.refreshSocketId(
+        req.params.id,
+        req.body.socketId
+      );
+      res.status(200).json(updatedUser);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
   }
-});
+);
 
 module.exports = router;
