@@ -36,9 +36,20 @@ async function deleteQueueUserBySocketId(socketId) {
     .deleteOne({ socketId: socketId });
 }
 
+async function refreshSocketId(googleId, socketId) {
+  const clientmongo = await connection.getConnection();
+  const query = { googleId: googleId.toString() };
+  const newValues = { $set: { socketId: socketId.toString() } };
+  await clientmongo
+    .db(process.env.DATABASE)
+    .collection("Queue")
+    .updateOne(query, newValues);
+}
+
 module.exports = {
   getQueueUsers,
   insertQueueUser,
   deleteQueueUserBySocketId,
   popQueueUser,
+  refreshSocketId,
 };

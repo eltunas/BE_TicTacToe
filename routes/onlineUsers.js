@@ -4,6 +4,7 @@ const onlineUsers = require("../data_access/onlineUsers");
 const onlineUserModel = require("../data_access/Models/onlineUserModel");
 const auth = require("../Middlewares/auth");
 const onlineUserMiddleware = require("../Middlewares/onlineUser");
+const queueUsers = require("../data_access/queueUsers");
 
 router.get("/", auth.verifyToken, async (req, res) => {
   try {
@@ -42,6 +43,7 @@ router.put(
         req.params.id,
         req.body.socketId
       );
+      await queueUsers.refreshSocketId(req.params.id, req.body.socketId);
       res.status(200).json(updatedUser);
     } catch (err) {
       res.status(500).json({ message: err.message });
