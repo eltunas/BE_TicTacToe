@@ -24,7 +24,7 @@ async function popQueueUser() {
   const user = await clientmongo
     .db(process.env.DATABASE)
     .collection("Queue")
-    .findOneAndDelete();
+    .findOneAndDelete({});
   return user;
 }
 
