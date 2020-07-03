@@ -24,10 +24,7 @@ async function popQueueUser() {
   const user = await clientmongo
     .db(process.env.DATABASE)
     .collection("Queue")
-    .findAndModify({
-      remove: true,
-    })
-    .limit(1);
+    .findOneAndDelete();
   return user;
 }
 
@@ -53,4 +50,5 @@ module.exports = {
   insertQueueUser,
   deleteQueueUserBySocketId,
   getSingleQueueUser,
+  popQueueUser,
 };

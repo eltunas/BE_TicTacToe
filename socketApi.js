@@ -65,7 +65,8 @@ const moveData = async moveData => {
 };
 
 async function findMatch(socket) {
-  let peer = await dataQueue.getSingleQueueUser();
+  let peer = await dataQueue.popQueueUser();
+  console.log("peer: ", peer);
   if (peer != null) {
     if (peer.socketId != socket.id) {
       let player1;
@@ -95,8 +96,7 @@ async function findMatch(socket) {
 
       peerSocket.emit("matchFound", player1);
       socket.emit("matchFound", player2);
-
-      await dataQueue.deleteQueueUserBySocketId(peer.socketId);
+      await subscribeToQueueUsers();
     }
   } else {
     const newQueueUser = await dataOnlineUsers.getOnlineUserBySocketId(
