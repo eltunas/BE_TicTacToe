@@ -19,7 +19,7 @@ socketApi.io.on("connection", socket => {
 const subscribeToTicTaeToe = socket => {
   socket.on("findMatch", () => subscribeToGame(socket));
   socket.on("disconnect", () => handleDisconnection(socket));
-  socket.on("newUserOnline", () => subscribeToOnlineUsers());
+  socket.on("newOnlineUser", () => subscribeToOnlineUsers());
   socket.on("newQueueUser", () => subscribeToQueueUsers());
 };
 
