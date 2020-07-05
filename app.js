@@ -9,6 +9,8 @@ const usersRouter = require("./routes/users");
 const rankingRouter = require("./routes/ranking");
 const onlineUsersRouter = require("./routes/onlineUsers");
 const queueUsersRouter = require("./routes/queueUsers");
+const polls = require("./routes/polls");
+const pollsAnswers = require("./routes/pollsAnswers");
 
 const app = express();
 
@@ -26,7 +28,9 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/ranking", rankingRouter);
 app.use("/onlineUsers", onlineUsersRouter);
-app.use("/queueUsers", queueUsersRouter)
+app.use("/queueUsers", queueUsersRouter);
+app.use("/api/polls", polls);
+app.use("/api/pollsAnswers", pollsAnswers);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
