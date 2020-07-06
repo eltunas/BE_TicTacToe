@@ -21,6 +21,11 @@ const subscribeToTicTaeToe = socket => {
   socket.on("disconnect", () => handleDisconnection(socket));
   socket.on("newOnlineUser", () => subscribeToOnlineUsers());
   socket.on("newQueueUser", () => subscribeToQueueUsers());
+  subscribeToKeepAlive();
+};
+
+const subscribeToKeepAlive = () => {
+  setInterval(() => socketApi.io.emit("hi"), 54000);
 };
 
 const subscribeToOnlineUsers = async () => {
