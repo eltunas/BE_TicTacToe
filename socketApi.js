@@ -111,7 +111,11 @@ async function findMatch(socket) {
     const newQueueUser = await dataOnlineUsers.getOnlineUserBySocketId(
       socket.id
     );
-    await dataQueueUsers.insertQueueUser(newQueueUser);
+    try {
+      await dataQueueUsers.insertQueueUser(newQueueUser);
+    } catch (err) {
+      socket.emit("errorAtQueue");
+    }
   }
 }
 
