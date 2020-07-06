@@ -25,7 +25,10 @@ const subscribeToTicTaeToe = socket => {
 };
 
 const subscribeToKeepAlive = () => {
-  setInterval(() => socketApi.io.emit("hi"), 54000);
+  setInterval(() => {
+    socketApi.io.emit("hi");
+    console.log("keep alive sent :)");
+  }, 54000);
 };
 
 const subscribeToOnlineUsers = async () => {
