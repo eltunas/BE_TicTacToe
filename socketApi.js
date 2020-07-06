@@ -25,7 +25,7 @@ const subscribeToTicTaeToe = socket => {
 };
 
 const subscribeToKeepAlive = () => {
-  let intervalId = setInterval(() => {
+  const intervalId = setInterval(() => {
     socketApi.io.emit("hi");
     console.log("keep alive sent :)");
   }, 54000);
