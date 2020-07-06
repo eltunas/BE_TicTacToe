@@ -21,7 +21,7 @@ app.set("port", port);
  */
 
 var server = http.createServer(app);
-socketApi.io.attach(server);
+socketApi.io.attach(server, { pingInterval: 60000 });
 /**
  * Listen on provided port, on all network interfaces.
  */
