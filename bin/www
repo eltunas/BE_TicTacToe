@@ -21,11 +21,7 @@ app.set("port", port);
  */
 
 var server = http.createServer(app);
-socketApi.io.attach(server, {
-  transports: ["websocket"],
-  pingInterval: 300000,
-  pingTimeout: 300000,
-});
+socketApi.io.attach(server);
 /**
  * Listen on provided port, on all network interfaces.
  */
