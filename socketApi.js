@@ -17,18 +17,19 @@ socketApi.io.on("connection", socket => {
 });
 
 const subscribeToTicTaeToe = socket => {
+  const intervalId = subscribeToKeepAlive();
   socket.on("findMatch", () => subscribeToGame(socket));
-  socket.on("disconnect", () => handleDisconnection(socket));
+  socket.on("disconnect", () => handleDisconnection(socket, intervalId));
   socket.on("newOnlineUser", () => subscribeToOnlineUsers());
   socket.on("newQueueUser", () => subscribeToQueueUsers());
-  subscribeToKeepAlive();
 };
 
 const subscribeToKeepAlive = () => {
-  setInterval(() => {
+  let intervalId = setInterval(() => {
     socketApi.io.emit("hi");
     console.log("keep alive sent :)");
   }, 54000);
+  return intervalId;
 };
 
 const subscribeToOnlineUsers = async () => {
@@ -114,7 +115,8 @@ async function findMatch(socket) {
   }
 }
 
-async function handleDisconnection(socket) {
+async function handleDisconnection(socket, intervalId) {
+  clearInterval(intervalId);
   let room = await dataRooms.getRoomByPlayerId(socket.id);
   await dataOnlineUsers.deleteOnlineUserBySocketId(socket.id);
   await dataQueueUsers.deleteQueueUserBySocketId(socket.id);
